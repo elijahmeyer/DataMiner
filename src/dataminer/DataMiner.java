@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package dataminer;
+import org.apache.jorphan.collections.HashTree;
 /**
  *
  * @author Elijah
@@ -14,7 +15,7 @@ public class DataMiner {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        HashTree ht = new HashTree();
     }
     
 }

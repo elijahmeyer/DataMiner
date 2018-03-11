@@ -18,10 +18,13 @@ public class DataMiner {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        ArrayList<ArrayList<Integer>> database = readInDatabase();
+        /*
+        ArrayList<ArrayList<Integer>> database = readInDatabase();        
         if (database == null) {
             return;
         }
+        
+        int numItems = countItems(database);
         
         for (int i = 0; i < database.size(); i++) {
             ArrayList<Integer> temp = database.get(i);
@@ -31,6 +34,16 @@ public class DataMiner {
             System.out.println(": Line " + i);
         }
         HashTree ht = new HashTree();
+        */
+        ArrayList<Integer> list = new ArrayList<>();
+        Candidate c;
+        for (int i = 0; i < 7; i++) {
+            list.add(i);
+            c = new Candidate(list, 7);
+            ArrayList<Integer> u = c.union();
+            u.clear();
+            c.union();
+        }
     }
     
     public static ArrayList<ArrayList<Integer>> readInDatabase() {
@@ -54,5 +67,40 @@ public class DataMiner {
             return null;
         }
         return db;
+    }
+    
+    public static int countItems(ArrayList<ArrayList<Integer>> db) {
+        int max = 0;
+        for (int i = 0; i < db.size(); i++) {
+            ArrayList<Integer> temp = db.get(i);
+            for (int j = 0; j < temp.size(); j++) {
+                int item = temp.get(j);
+                if (max < item) {
+                    max = item;
+                }
+            }
+        }
+        return max + 1;
+    }
+    
+    public static int computeSupport(ArrayList<ArrayList<Integer>> db, ArrayList<Integer> itemset) {
+        int supportCount = 0;
+        int itemCount;
+        for (int i = 0; i < db.size(); i++) {
+            ArrayList<Integer> temp = db.get(i);
+            itemCount = 0;
+            for (int j = 0; j < temp.size(); j++) {
+                if (itemCount == itemset.size()) {
+                    break;
+                }
+                if (temp.get(j) == itemset.get(itemCount)) {
+                    itemCount++;
+                }
+            }
+            if (itemCount == itemset.size()) {
+                supportCount++;
+            }
+        }
+        return supportCount;
     }
 }

@@ -14,14 +14,11 @@ import java.util.ArrayList;
 public class Candidate {
     private ArrayList<Integer> head;
     private ArrayList<Integer> tail;
+    int count = 0;
     
-    public Candidate(ArrayList<Integer> h, int itemCount) {
+    public Candidate(ArrayList<Integer> h, ArrayList<Integer> t) {
         head = h;
-        ArrayList<Integer> temp = new ArrayList<>();
-        for (int i = (h.get(h.size() - 1) + 1); i < itemCount; i++) {
-            temp.add(i);
-        }
-        tail = temp;
+        tail = t;
     }
     
     public ArrayList<Integer> union() {
@@ -29,6 +26,10 @@ public class Candidate {
         union.addAll(head);
         union.addAll(tail);
         return union;
+    }
+    
+    public void increment() {
+        count++;
     }
     
     public ArrayList<Integer> getHead() {
@@ -39,7 +40,14 @@ public class Candidate {
         return tail;
     }
     
+    public int getCount() {
+        return count;
+    }
     
+    public void setCount(int num) {
+        count = num;
+    }
+           
     @Override
     public String toString() {
         String message = "Head: ";

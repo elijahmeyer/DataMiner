@@ -12,8 +12,8 @@ import java.util.ArrayList;
  * @author Elijah
  */
 public class Candidate {
-    private ArrayList<Integer> head;
-    private ArrayList<Integer> tail;
+    private ArrayList<Integer> head = new ArrayList<>();
+    private ArrayList<Integer> tail = new ArrayList<>();
     int count = 0;
     
     public Candidate(ArrayList<Integer> h, ArrayList<Integer> t) {
@@ -21,6 +21,10 @@ public class Candidate {
         tail = t;
     }
     
+    /*
+       This method returns the union of the Candidate's head and tail lists.
+       This helps find maximal frequent itemsets.
+    */
     public ArrayList<Integer> union() {
         ArrayList<Integer> union = new ArrayList<>();
         union.addAll(head);

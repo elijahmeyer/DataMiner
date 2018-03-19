@@ -14,11 +14,15 @@ import java.util.ArrayList;
 public class Candidate {
     private ArrayList<Integer> head = new ArrayList<>();
     private ArrayList<Integer> tail = new ArrayList<>();
-    int count = 0;
+    private ArrayList<Integer> tailBuckets = new ArrayList<>();
+    private int count = 0;
+    private int unionCount = 0;
+    
     
     public Candidate(ArrayList<Integer> h, ArrayList<Integer> t) {
         head = h;
         tail = t;
+        tailBuckets = genTailBuckets();
     }
     
     /*
@@ -30,6 +34,42 @@ public class Candidate {
         union.addAll(head);
         union.addAll(tail);
         return union;
+    }
+    
+    private ArrayList<Integer> genTailBuckets() {
+        ArrayList<Integer> buckets = new ArrayList<>();
+        for (int i = 0; i < tail.size(); i++) {
+            buckets.add(0);
+        }
+        return buckets;
+    }
+    
+    public void countSupport(ArrayList<Integer> transaction) {
+        ArrayList<Integer> union = union();
+        int itemCount = 0;
+        for (int i = 0; i < union.size(); i++) {
+            if (transaction.contains(union.get(i))) {
+                itemCount++;
+            }
+        }
+        if (itemCount == union.size()) {
+            unionCount++;
+        }
+        
+        for (int j = 0; j < tail.size(); j++) {
+            ArrayList<Integer> temp = new ArrayList<>();
+            temp.addAll(head);
+            temp.add(tail.get(j));
+            int subsetCount = 0;
+            for (int k = 0; k < temp.size(); k++) {
+                if (transaction.contains(temp.get(k))) {
+                    subsetCount++;
+                }
+            }
+            if (subsetCount == temp.size()) {
+                tailBuckets.set(j, tailBuckets.get(j) + 1);
+            }
+        }
     }
     
     public void increment() {
@@ -47,11 +87,7 @@ public class Candidate {
     public int getCount() {
         return count;
     }
-    
-    public void setCount(int num) {
-        count = num;
-    }
-           
+            
     @Override
     public String toString() {
         String message = "Head: ";
@@ -62,6 +98,8 @@ public class Candidate {
         for (int j = 0; j < tail.size(); j++) {
             message += tail.get(j) + " ";
         }
+        
+        message += "\nTail Buckets: " + tailBuckets.size();
         return message;
     }
 }

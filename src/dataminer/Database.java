@@ -7,7 +7,10 @@ package dataminer;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Scanner;
+import org.apache.jorphan.collections.HashTree;
+import org.apache.jorphan.collections.SearchByClass;
 
 /**
  *
@@ -75,6 +78,18 @@ public class Database {
         return database.get(index);
     }
     
+    public void supportScan(HashTree candidates) {
+        for (int i = 0; i < database.size(); i++) {
+            ArrayList<Integer> transaction = database.get(i);
+            SearchByClass traverser = new SearchByClass(Candidate.class);
+            candidates.traverse(traverser);
+            Iterator<Candidate> iterator = traverser.getSearchResults().iterator();
+            
+            while (iterator.hasNext()) {
+                iterator.next().countSupport(transaction);
+            }
+        }
+    }
     /*
       This method determines the support count of a candidate itemset.
     */
@@ -110,6 +125,7 @@ public class Database {
     /*
        This method counts the frequency of every item in the database.
        @param: An empty array with the same number of entries as items in the database.
+       Precondition: the array must have the same number of entries as items in the database.
        Postcondition: Every entry in the array will contain the frequency of its index
        in the database.
     */

@@ -7,8 +7,10 @@ package dataminer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Scanner;
 import org.apache.jorphan.collections.HashTree;
+import org.apache.jorphan.collections.SearchByClass;
 /**
  *
  * @author Elijah
@@ -39,10 +41,20 @@ public class DataMiner {
         // Convert frequent items into candidate groups.
         HashTree groups = new HashTree();
         HashTree frequent = genInitialGroups(database, groups, numItems, SUPPORT_COUNT);
-        System.out.println("HashTable:");
-        System.out.println(groups.toString());
-        System.out.println("Frequent: ");
-        System.out.println(frequent.toString());
+        
+        // While loop should begin here:
+        HashTree newGroups = new HashTree();
+        database.supportScan(groups);
+        findMaximals(groups, newGroups, frequent, SUPPORT_COUNT);
+        
+        SearchByClass traverser = new SearchByClass(Candidate.class);
+        frequent.traverse(traverser);
+        Iterator<Candidate> iterator = traverser.getSearchResults().iterator();
+        System.out.println("\nFrequent itemsets:");
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next().toString());
+        }
+        
     }
     
     public static HashTree genInitialGroups(Database db, HashTree groups, int numItems, int minSupCount) {
@@ -81,7 +93,7 @@ public class DataMiner {
         ArrayList<Integer> head = new ArrayList<>();
         head.add(itemVectors.get(itemVectors.size() - 1).getItem());
         Candidate f = new Candidate(head, new ArrayList<>());
-        frequent.add(f);
+        frequent.add(f.getHead(), f);
         return frequent;
     }
     
@@ -100,4 +112,24 @@ public class DataMiner {
         }
         return itemVectors;
     }
+    
+    public static void findMaximals(HashTree cand, HashTree newCand, HashTree freq, int minSupCount) {
+        SearchByClass traverser = new SearchByClass(Candidate.class);
+        cand.traverse(traverser);
+        Iterator<Candidate> iterator = traverser.getSearchResults().iterator();
+        
+        while (iterator.hasNext()) {
+            Candidate temp = iterator.next();
+            if (temp.getUnionCount() >= minSupCount) {
+                Candidate frequent = new Candidate(temp.union(), new ArrayList<>());
+                freq.add(frequent.getHead(), frequent);
+            }
+            else {
+                Candidate largestFrequent = temp.genSubNodes(newCand, freq, minSupCount);
+                freq.add(largestFrequent.getHead(), largestFrequent);
+            }
+        }
+    }
+    
+    
 }

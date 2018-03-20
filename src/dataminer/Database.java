@@ -89,6 +89,14 @@ public class Database {
                 iterator.next().countSupport(transaction);
             }
         }
+        /*
+        SearchByClass traverser = new SearchByClass(Candidate.class);
+        candidates.traverse(traverser);
+        Iterator<Candidate> iterator = traverser.getSearchResults().iterator();
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next().toString());
+        }
+        */
     }
     /*
       This method determines the support count of a candidate itemset.

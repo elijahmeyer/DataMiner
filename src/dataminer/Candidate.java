@@ -6,6 +6,7 @@
 package dataminer;
 
 import java.util.ArrayList;
+import org.apache.jorphan.collections.HashTree;
 
 /**
  *
@@ -72,6 +73,30 @@ public class Candidate {
         }
     }
     
+    public Candidate genSubNodes(HashTree cand, HashTree frequent, int minSupCount) {
+        if (!tail.isEmpty()) {
+            pruneTail(minSupCount);
+            // TODO: order the items in tail, add new Candidates to cand, and return the greatest
+        }
+        return new Candidate(head, new ArrayList<>());
+    }
+    
+    public void pruneTail(int minSupCount) {
+        ArrayList<Integer> removeTargets = new ArrayList<>();
+        for (int i = 0; i < tailBuckets.size(); i++) {
+            if (tailBuckets.get(i) < minSupCount) {
+                removeTargets.add(i);
+            }
+        }
+            
+        for (int i = 0; i < removeTargets.size(); i++) {
+                   
+            // Removing any items from the ArrayList will change the indices of the other 
+            // entries. Keep track of the number of items removed to compensate.
+            tail.remove(removeTargets.get(i) - i);
+        }
+    }
+    
     public void increment() {
         count++;
     }
@@ -84,8 +109,8 @@ public class Candidate {
         return tail;
     }
     
-    public int getCount() {
-        return count;
+    public int getUnionCount() {
+        return unionCount;
     }
             
     @Override
@@ -99,7 +124,10 @@ public class Candidate {
             message += tail.get(j) + " ";
         }
         
-        message += "\nTail Buckets: " + tailBuckets.size();
+        message += "\nTail Buckets: ";
+        for (int k = 0; k < tailBuckets.size(); k++) {
+            message += tailBuckets.get(k) + " ";
+        }
         return message;
     }
 }

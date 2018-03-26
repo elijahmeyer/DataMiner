@@ -84,10 +84,13 @@ public class Database {
             SearchByClass traverser = new SearchByClass(Candidate.class);
             candidates.traverse(traverser);
             Iterator<Candidate> iterator = traverser.getSearchResults().iterator();
-            
             while (iterator.hasNext()) {
-                iterator.next().countSupport(transaction);
+                Candidate c = iterator.next();
+                if (DataMiner.subsetOf(c.getHead(), transaction)) {
+                    c.countSupport(transaction);
+                }
             }
+            System.out.println("Transaction " + (i + 1) + " scanned.");
         }
         /*
         SearchByClass traverser = new SearchByClass(Candidate.class);

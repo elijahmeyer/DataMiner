@@ -6,6 +6,7 @@
 package dataminer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import org.apache.jorphan.collections.HashTree;
 
 /**
@@ -73,12 +74,41 @@ public class Candidate {
         }
     }
     
-    public Candidate genSubNodes(HashTree cand, HashTree frequent, int minSupCount) {
+    public Candidate genSubNodes(HashTree cand, int minSupCount) {
+        System.out.println("Before:\n" + this.toString());
+        this.pruneTail(minSupCount);
+        System.out.println("After:\n" + this.toString());
         if (!tail.isEmpty()) {
-            pruneTail(minSupCount);
-            // TODO: order the items in tail, add new Candidates to cand, and return the greatest
+            ArrayList<FrequentItem> tailItems = new ArrayList<>();
+            for (int i = 0; i < tail.size(); i++) {
+                FrequentItem temp = new FrequentItem(tail.get(i), tailBuckets.get(i));
+                tailItems.add(temp);
+            }
+            Collections.sort(tailItems);
+            for (int i = 0; i < tailItems.size() - 1; i++) {
+                ArrayList<Integer> nextHead = new ArrayList<>();
+                nextHead.addAll(head);
+                nextHead.add(tailItems.get(i).getItem());
+                
+                ArrayList<Integer> nextTail = new ArrayList<>();
+                for (int j = i + 1; j < tailItems.size(); j++) {
+                    nextTail.add(tailItems.get(j).getItem());
+                }
+                Candidate nextCandidate = new Candidate(nextHead, nextTail);
+                cand.add(nextCandidate.getHead(), nextCandidate);   
+                System.out.println(nextCandidate.toString());
+            }
+            ArrayList<Integer> newHead = new ArrayList<>();
+            newHead.addAll(head);
+            newHead.add(tailItems.get(tailItems.size() - 1).getItem());
+            Candidate next = new Candidate(newHead, new ArrayList<>());
+            System.out.println(next.toString());
+            return next;            
         }
-        return new Candidate(head, new ArrayList<>());
+        ArrayList<Integer> newHead = new ArrayList<>();
+        newHead.addAll(head);
+        Candidate c = new Candidate(newHead, new ArrayList<>());
+        return c;
     }
     
     public void pruneTail(int minSupCount) {
@@ -94,6 +124,7 @@ public class Candidate {
             // Removing any items from the ArrayList will change the indices of the other 
             // entries. Keep track of the number of items removed to compensate.
             tail.remove(removeTargets.get(i) - i);
+            tailBuckets.remove(removeTargets.get(i) - i);
         }
     }
     

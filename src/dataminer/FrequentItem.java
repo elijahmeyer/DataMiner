@@ -1,14 +1,9 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+ * Elijah Meyer
+ * update header
+ */ 
 package dataminer;
 
-/**
- *
- * @author Elijah
- */
 public class FrequentItem implements Comparable<FrequentItem> {
     private int item;
     private int count;
@@ -17,15 +12,31 @@ public class FrequentItem implements Comparable<FrequentItem> {
         item = i;
         count = c;
     }
-    
+
+    /*
+       Returns the item stored in this FrequentItem.
+       @return the item
+    */
     public int getItem() {
         return item;
     }
     
+    /*
+       Returns the frequency of the item stored in this FrequentItem.
+       @return the item's frequency
+    */
     public int getCount() {
         return count;
     }
     
+    /*
+       Compares two FrequentItems. Used to sort an ArrayList of FrequentItems 
+       in ascending order of frequency.
+       @param f - the FrequentItem to be compared to the calling FrequentItem
+       @return an integer reflecting whether the calling FrequentItem occurs
+       more frequently, less frequently, or at the same frequency as the 
+       FrequentItem submitted as a parameter
+    */
     @Override
     public int compareTo(FrequentItem f) {
         if (count < f.getCount()) {

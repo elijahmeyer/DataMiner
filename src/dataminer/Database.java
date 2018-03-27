@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Elijah Meyer
+ * update header
  */
 package dataminer;
 
@@ -12,10 +11,7 @@ import java.util.Scanner;
 import org.apache.jorphan.collections.HashTree;
 import org.apache.jorphan.collections.SearchByClass;
 
-/**
- *
- * @author Elijah
- */
+
 public class Database {
     private ArrayList<ArrayList<Integer>> database = new ArrayList<>();
     private int numItems = 0;
@@ -25,8 +21,9 @@ public class Database {
     }
     
     /*
-      This method scans the appropriate file, if one exists, for lists of items.
+      Scans the appropriate file, if one exists, for lists of items represented as integers.
       These lists are converted to integers and stored in a nested ArrayList.
+      @param filename - the name of the file to be scanned
     */
     private void read(String filename) {
         // Open file.
@@ -54,87 +51,83 @@ public class Database {
             // Close the Scanner to the input file when finished.
             input.close();
             
-            // Increment the count of items to accomodate the fact that one of the
-            // items is designated with the number 0.
+            // numItems holds the largest integer in the database, which should
+            // be the number of distinct items in the database. However, the
+            // items begin count at 0 in the database this program was designed
+            // to mine, so numItems must be incremented to account for this.
             numItems++;
+            
         } catch (Exception ex) {
             System.out.println(ex);
             database = null;
         }
     }
+    
+    /*
+      Returns the nested ArrayList storing the database's transactions.
+      @return the ArrayList of transactions
+    */
     public ArrayList<ArrayList<Integer>> getList() {
         return database;
     }
     
+    /*
+      Returns the count of distinct items in the database.
+      @return the number of different items in the database
+    */
     public int getNumItems() {
         return numItems;
     }
     
+    /*
+      Returns the number of transactions in the database.
+      @return the number of entries in the ArrayList of transactions
+    */
     public int size() {
         return database.size();
     }
     
+    /*
+       Returns the specified transaction.
+       @param index - the index of the desired transaction
+       @return an ArrayList containing integers that represent items purchased
+       during a transaction
+    */
     public ArrayList<Integer> get(int index) {
         return database.get(index);
     }
     
+    /*
+      Iterates through the database, counting the support of every candidate
+      itemset in the given hash tree.
+      @param candidates - the hash tree containing the candidate itemsets to be
+      evaluated for support
+    */
     public void supportScan(HashTree candidates) {
+        // For each transaction, iterate through the hash tree.
         for (int i = 0; i < database.size(); i++) {
             ArrayList<Integer> transaction = database.get(i);
             SearchByClass traverser = new SearchByClass(Candidate.class);
             candidates.traverse(traverser);
             Iterator<Candidate> iterator = traverser.getSearchResults().iterator();
             while (iterator.hasNext()) {
+                
+                // For each candidate in the hash tree, count the support of the
+                // union of its head and tail and the union of its head and each item
+                // in its tail if its head appears in the transaction.
                 Candidate c = iterator.next();
                 if (DataMiner.subsetOf(c.getHead(), transaction)) {
                     c.countSupport(transaction);
                 }
             }
-            System.out.println("Transaction " + (i + 1) + " scanned.");
+            
+            // Inform the user of the progress made thus far.
+            System.out.println("Transaction " + (i + 1) + " of " + database.size() + " scanned.");
         }
-        /*
-        SearchByClass traverser = new SearchByClass(Candidate.class);
-        candidates.traverse(traverser);
-        Iterator<Candidate> iterator = traverser.getSearchResults().iterator();
-        while (iterator.hasNext()) {
-            System.out.println(iterator.next().toString());
-        }
-        */
     }
-    /*
-      This method determines the support count of a candidate itemset.
-    */
-    public int supportOf(ArrayList<Integer> itemset) {
-        // Initialize variables.
-        int supportCount = 0;
-        int itemCount;
         
-        // Read in every list in the database.
-        for (int i = 0; i < database.size(); i++) {
-            ArrayList<Integer> temp = database.get(i);
-            itemCount = 0;
-            
-            // Compare every item in the transaction with every item in the
-            // submitted itemset.
-            for (int j = 0; j < temp.size(); j++) {
-                for (int k = 0; k < itemset.size(); k++) {
-                    if (itemset.get(k) == temp.get(j)) {
-                        itemCount++;
-                    }
-                }
-            }
-            
-            // If every item in the itemset was found in the transaction, increment
-            // support count.
-            if (itemCount == itemset.size()) {
-                supportCount++;
-            }
-        }
-        return supportCount;
-    }
-    
     /*
-       This method counts the frequency of every item in the database.
+       Counts the frequency of every item in the database.
        @param: An empty array with the same number of entries as items in the database.
        Precondition: the array must have the same number of entries as items in the database.
        Postcondition: Every entry in the array will contain the frequency of its index

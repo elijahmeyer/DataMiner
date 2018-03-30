@@ -1,6 +1,14 @@
 /*
  * Elijah Meyer
  * update header
+ *
+ *
+ *
+ * This file defines the Database class and all of its fields and methods.
+ * The Database class is used to store the transaction database in a quickly
+ * accessible manner and scan it. The class contains a nested ArrayList
+ * of integers to keep track of transactions and it keeps track of the number
+ * of different items in the database.
  */
 package dataminer;
 

@@ -1,6 +1,14 @@
 /*
  * Elijah Meyer
  * update header
+ *
+ *
+ * This file defines the Candidate class and its data fields and methods. 
+ * The Candidate class represents the candidate groups used in the MaxMiner
+ * algorithm. The class contains an ArrayList containing the head of the group,
+ * an ArrayList containing the group's tail, an ArrayList containing the support
+ * counts of the head united with each item in the tail, and the support count of
+ * the union of the head and the tail.
  */
 
 package dataminer;

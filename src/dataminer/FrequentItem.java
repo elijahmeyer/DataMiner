@@ -1,6 +1,12 @@
 /*
  * Elijah Meyer
  * update header
+ *
+ *
+ *
+ * This class defines the FrequentItem class and its data fields and methods.
+ * This class contains an item and a count of that item's frequency in order to
+ * sort items in order of their frequency.
  */ 
 package dataminer;
 

@@ -3,7 +3,10 @@
  * Add header
  *
  *
+ * This file contains the driver program and several methods used to implement
+ * the MaxMiner data mining algorithm on a specified transaction database.
  */
+
 package dataminer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -231,4 +234,6 @@ public class DataMiner {
         // If every item in subset is in superset, it must really be a subset.
         return supportCount == subset.size();
     }
+    
+    
 }

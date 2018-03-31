@@ -66,12 +66,12 @@ public class DataMiner {
             unpackCandidates(groups, newGroups, frequent, SUPPORT_COUNT);
             
             // Remove any frequent itemsets that are subsets of other frequent itemsets.
-            frequent = purgeFrequent(frequent);
+            frequent = pruneFrequents(frequent);
             
             // Remove any candidate groups from the new candidate hash tree
             // whose union of head and tail is a subset of a frequent itemset
             // and change focus to the new candidate hash tree.
-            groups = purgeCandidates(newGroups, frequent);
+            groups = pruneCandidates(newGroups, frequent);
         }
         
         // Print maximal frequent itemsets to the console.
@@ -239,10 +239,18 @@ public class DataMiner {
         return supportCount == subset.size();
     }
     
-    public static HashTree purgeFrequent(HashTree freq) {
+    /*
+       Removes all itemsets from a frequent hash tree that are subsets of another
+       itemset in that hash tree.
+       @param freq - the frequent hash tree to be trimmed
+       @return the trimmed frequent hash tree
+    */
+    public static HashTree pruneFrequents(HashTree freq) {
+        // Initialize variables.
         HashTree newFrequent = new HashTree();
         ArrayList<Candidate> freqContents = new ArrayList<>();
         
+        // Add every itemset in the frequent hash tree into an array.
         SearchByClass traverser = new SearchByClass(Candidate.class);
         freq.traverse(traverser);
         Iterator<Candidate> iterator = traverser.getSearchResults().iterator();
@@ -254,36 +262,55 @@ public class DataMiner {
         ArrayList<Integer> toRemove = new ArrayList<>();
         for (int i = 0; i < freqContents.size(); i++) {
             for (int j = i + 1; j < freqContents.size(); j++) {
+                
+                // If any itemset in the array is a subset of another itemset, 
+                // add that group's index to the list of groups to be removed. Make sure no 
+                // index is added more than once.
                 if (subsetOf(freqContents.get(i).getHead(), freqContents.get(j).getHead()) && !toRemove.contains(i)) {
                     toRemove.add(i);
+                    
+                    // Once it is determined that the itemset is a subset of another,
+                    // further searching is unnecessary. Exit the inner loop.
                     break;
                 }
+                
+                // Check the itemsets for subsets in the other order to make programming easier.
                 else if (subsetOf(freqContents.get(j).getHead(), freqContents.get(i).getHead()) && !toRemove.contains(j)) {
                     toRemove.add(j);
                 }
             }
         }
         
-        // Remove the items with the specified indices from the tail.
+        // Remove the items with the specified indices from the ArrayList of frequent itemsets.
         for (int i = 0; i < toRemove.size(); i++) {
                    
-            // Removing any items from the tail will change the indices of the other 
+            // Removing any itemsets from the ArrayList will change the indices of the other 
             // entries. Keep track of the number of items removed to compensate.
             freqContents.remove(toRemove.get(i) - i);
         }
         
+        // Add the itemsets that are not subsets to the new frequent hash tree.
         for (int i = 0; i < freqContents.size(); i++) {
             newFrequent.add(freqContents.get(i).getHead(), freqContents.get(i));
         }
         
+        // Return the new frequent hash tree.
         return newFrequent;
     }
     
-    public static HashTree purgeCandidates(HashTree cand, HashTree freq) {
+    /*
+       Removes all itemsets from a candidate hash tree that are subsets of an
+       itemset in a frequent hash tree.
+       @param cand - the candidate hash tree to be trimmed
+       @param freq - the frequent hash tree to be compared against
+       @return the trimmed candidate hash tree
+    */
+    public static HashTree pruneCandidates(HashTree cand, HashTree freq) {
+        // Initialize variables.
         HashTree newCand = new HashTree();
-        
         ArrayList<Candidate> freqContents = new ArrayList<>();
         
+        // Iterate through the frequent hash tree and add its contents to an ArrayList.
         SearchByClass traverser = new SearchByClass(Candidate.class);
         freq.traverse(traverser);
         Iterator<Candidate> iterator = traverser.getSearchResults().iterator();
@@ -291,9 +318,10 @@ public class DataMiner {
         while (iterator.hasNext()) {
             freqContents.add(iterator.next());
         }
-        
+     
+        // Iterate through the candidate hash tree and add its contents to an ArrayList.
         ArrayList<Candidate> candContents = new ArrayList<>();
-        
+     
         traverser = new SearchByClass(Candidate.class);
         cand.traverse(traverser);
         iterator = traverser.getSearchResults().iterator();
@@ -306,25 +334,35 @@ public class DataMiner {
         
         for (int i = 0; i < candContents.size(); i++) {
             for (int j = 0; j < freqContents.size(); j++) {
+                
+                // If the union of head and tail of any candidate group in the candidate hash tree is a
+                // subset of an itemset in the frequent hash tree, add the index of the candidate
+                // group to an ArrayList to be removed later. Make sure no index is
+                // addded multiple times.
                 if (subsetOf(candContents.get(i).union(), freqContents.get(j).getHead()) && !toRemove.contains(i)) {
                     toRemove.add(i);
+                    // If a candidate group is determined to be a subset of a frequent
+                    // itemset, there is no need to search further. Exit the inner loop.
                     break;
                 }
             }
         }
         
-        // Remove the items with the specified indices from the tail.
+        // Remove the items with the specified indices from the ArrayList of candidate groups.
         for (int i = 0; i < toRemove.size(); i++) {
                    
-            // Removing any items from the tail will change the indices of the other 
+            // Removing any items from the ArrayList will change the indices of the other 
             // entries. Keep track of the number of items removed to compensate.
             candContents.remove(toRemove.get(i) - i);
         }
         
+        // Add every candidate group that is not a subset of a frequent itemset 
+        // to the new candidate hash tree.
         for (int i = 0; i < candContents.size(); i++) {
             newCand.add(candContents.get(i).getHead(), candContents.get(i));
         }
         
+        // Return the new candidate hash tree.
         return newCand;
     }
 }

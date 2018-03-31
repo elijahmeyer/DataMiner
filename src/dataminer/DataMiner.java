@@ -65,9 +65,13 @@ public class DataMiner {
             // Check support of each candidate groups's head united with each item in its tail.
             unpackCandidates(groups, newGroups, frequent, SUPPORT_COUNT);
             
-            // Switch focus to the new HashTree.
-            groups = newGroups;
-            // TODO: purge frequent and groups
+            // Remove any frequent itemsets that are subsets of other frequent itemsets.
+            frequent = purgeFrequent(frequent);
+            
+            // Remove any candidate groups from the new candidate hash tree
+            // whose union of head and tail is a subset of a frequent itemset
+            // and change focus to the new candidate hash tree.
+            groups = purgeCandidates(newGroups, frequent);
         }
         
         // Print maximal frequent itemsets to the console.
@@ -235,5 +239,92 @@ public class DataMiner {
         return supportCount == subset.size();
     }
     
+    public static HashTree purgeFrequent(HashTree freq) {
+        HashTree newFrequent = new HashTree();
+        ArrayList<Candidate> freqContents = new ArrayList<>();
+        
+        SearchByClass traverser = new SearchByClass(Candidate.class);
+        freq.traverse(traverser);
+        Iterator<Candidate> iterator = traverser.getSearchResults().iterator();
+        
+        while (iterator.hasNext()) {
+            freqContents.add(iterator.next());
+        }
+        
+        ArrayList<Integer> toRemove = new ArrayList<>();
+        for (int i = 0; i < freqContents.size(); i++) {
+            for (int j = i + 1; j < freqContents.size(); j++) {
+                if (subsetOf(freqContents.get(i).getHead(), freqContents.get(j).getHead()) && !toRemove.contains(i)) {
+                    toRemove.add(i);
+                    break;
+                }
+                else if (subsetOf(freqContents.get(j).getHead(), freqContents.get(i).getHead()) && !toRemove.contains(j)) {
+                    toRemove.add(j);
+                }
+            }
+        }
+        
+        // Remove the items with the specified indices from the tail.
+        for (int i = 0; i < toRemove.size(); i++) {
+                   
+            // Removing any items from the tail will change the indices of the other 
+            // entries. Keep track of the number of items removed to compensate.
+            freqContents.remove(toRemove.get(i) - i);
+        }
+        
+        for (int i = 0; i < freqContents.size(); i++) {
+            newFrequent.add(freqContents.get(i).getHead(), freqContents.get(i));
+        }
+        
+        return newFrequent;
+    }
     
+    public static HashTree purgeCandidates(HashTree cand, HashTree freq) {
+        HashTree newCand = new HashTree();
+        
+        ArrayList<Candidate> freqContents = new ArrayList<>();
+        
+        SearchByClass traverser = new SearchByClass(Candidate.class);
+        freq.traverse(traverser);
+        Iterator<Candidate> iterator = traverser.getSearchResults().iterator();
+        
+        while (iterator.hasNext()) {
+            freqContents.add(iterator.next());
+        }
+        
+        ArrayList<Candidate> candContents = new ArrayList<>();
+        
+        traverser = new SearchByClass(Candidate.class);
+        cand.traverse(traverser);
+        iterator = traverser.getSearchResults().iterator();
+        
+        while (iterator.hasNext()) {
+            candContents.add(iterator.next());
+        }
+        
+        ArrayList<Integer> toRemove = new ArrayList<>();
+        
+        for (int i = 0; i < candContents.size(); i++) {
+            for (int j = 0; j < freqContents.size(); j++) {
+                if (subsetOf(candContents.get(i).union(), freqContents.get(j).getHead()) && !toRemove.contains(i)) {
+                    toRemove.add(i);
+                    break;
+                }
+            }
+        }
+        
+        // Remove the items with the specified indices from the tail.
+        for (int i = 0; i < toRemove.size(); i++) {
+                   
+            // Removing any items from the tail will change the indices of the other 
+            // entries. Keep track of the number of items removed to compensate.
+            candContents.remove(toRemove.get(i) - i);
+        }
+        
+        for (int i = 0; i < candContents.size(); i++) {
+            newCand.add(candContents.get(i).getHead(), candContents.get(i));
+        }
+        
+        return newCand;
+    }
 }

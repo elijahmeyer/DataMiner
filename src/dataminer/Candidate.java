@@ -64,40 +64,36 @@ public class Candidate {
        in the tail is in the transaction. Increments the support counts of any
        itemsets that do appear in the transaction.
        @param transaction - the transaction to be scanned
+       Precondition: the Candidate's head appears in the transaction
+       (this precondition is assumed because this function is only called in
+       this program if the head is already determined to appear in the given transaction).
     */
     public void countSupport(ArrayList<Integer> transaction) {
-        ArrayList<Integer> union = union();
         int itemCount = 0;
         
         // Determine whether every item in the Candidate's head and tail is in
         // the transaction.
-        for (int i = 0; i < union.size(); i++) {
-            if (transaction.contains(union.get(i))) {
+        for (int i = 0; i < tail.size(); i++) {
+            if (transaction.contains(tail.get(i))) {
                 itemCount++;
             }
         }
         
         // If the count of items that appear in transaction is the same as the 
         // size of union, every item in union appears in transaction.
-        if (itemCount == union.size()) {
+        if (itemCount == tail.size()) {
             unionCount++;
+            for (int i = 0; i < tailBuckets.size(); i++) {
+                tailBuckets.set(i, tailBuckets.get(i) + 1);
+            }
+            return;
         }
         
         // Scan the transaction for the Candidate's head and each item in its tail.
         for (int j = 0; j < tail.size(); j++) {
-            ArrayList<Integer> temp = new ArrayList<>();
-            temp.addAll(head);
-            temp.add(tail.get(j));
-            int subsetCount = 0;
-            for (int k = 0; k < temp.size(); k++) {
-                if (transaction.contains(temp.get(k))) {
-                    subsetCount++;
-                }
-            }
-            
-            // If the Candidate's head and an item in the tail appear in the 
-            // transaction, increment the tail item's corresponding tailBucket.
-            if (subsetCount == temp.size()) {
+            if (transaction.contains(tail.get(j))) {
+                // If the Candidate's head and an item in the tail appear in the 
+                // transaction, increment the tail item's corresponding tailBucket.
                 tailBuckets.set(j, tailBuckets.get(j) + 1);
             }
         }

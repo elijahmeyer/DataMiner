@@ -115,22 +115,31 @@ public class Database {
         // For each transaction, iterate through the hash tree.
         for (int i = 0; i < database.size(); i++) {
             ArrayList<Integer> transaction = database.get(i);
+            int usedCount = 0;
             SearchByClass traverser = new SearchByClass(Candidate.class);
             candidates.traverse(traverser);
             Iterator<Candidate> iterator = traverser.getSearchResults().iterator();
             while (iterator.hasNext()) {
                 
-                // For each candidate in the hash tree, count the support of the
+                // For each Candidate in the hash tree, count the support of the
                 // union of its head and tail and the union of its head and each item
                 // in its tail if its head appears in the transaction.
                 Candidate c = iterator.next();
                 if (DataMiner.subsetOf(c.getHead(), transaction)) {
                     c.countSupport(transaction);
+                    usedCount++;
                 }
             }
             
             // Inform the user of the progress made thus far.
             System.out.println("Transaction " + (i + 1) + " of " + database.size() + " scanned.");
+
+            // If no Candidate's head appears in a transaction, prune that transaction. 
+            if (usedCount == 0) {
+                database.remove(i);
+                System.out.println("Transaction " + (i + 1) + " deleted.");
+                i--;
+            }
         }
     }
         

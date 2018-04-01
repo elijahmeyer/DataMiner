@@ -52,6 +52,11 @@ public class DataMiner {
         System.out.println("Generating initial groups...");
         HashTree groups = new HashTree();
         HashTree frequent = genInitialGroups(database, groups, numItems, SUPPORT_COUNT);
+        
+        if (frequent == null) {
+            return;
+        }
+        
         System.out.println("Generation successful.");
         
         while (!groups.isEmpty()) {

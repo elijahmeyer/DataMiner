@@ -259,36 +259,32 @@ public class DataMiner {
             freqContents.add(iterator.next());
         }
         
-        ArrayList<Integer> toRemove = new ArrayList<>();
         for (int i = 0; i < freqContents.size(); i++) {
             for (int j = i + 1; j < freqContents.size(); j++) {
                 
                 // If any itemset in the array is a subset of another itemset, 
-                // add that group's index to the list of groups to be removed. Make sure no 
-                // index is added more than once.
-                if (subsetOf(freqContents.get(i).getHead(), freqContents.get(j).getHead()) && !toRemove.contains(i)) {
-                    toRemove.add(i);
+                // remove it from the ArrayList.
+                if (subsetOf(freqContents.get(i).getHead(), freqContents.get(j).getHead())) {
+                    freqContents.remove(i);
                     
-                    // Once it is determined that the itemset is a subset of another,
-                    // further searching is unnecessary. Exit the inner loop.
+                    // Removing an itemset from the ArrayList will decrement the indices
+                    // of all later itemsets. Decrement the loop counter to compensate.
+                    i--;
+                    
+                    // Once the itemset is removed, exit the inner loop.
                     break;
                 }
                 
-                // Check the itemsets for subsets in the other order to make programming easier.
-                else if (subsetOf(freqContents.get(j).getHead(), freqContents.get(i).getHead()) && !toRemove.contains(j)) {
-                    toRemove.add(j);
+                // Check the itemsets in the other order to make programming easier.
+                else if (subsetOf(freqContents.get(j).getHead(), freqContents.get(i).getHead())) {
+                    freqContents.remove(j);
+                    
+                    // Decrement the loop counter for the reason stated above.
+                    j--;
                 }
             }
         }
-        
-        // Remove the items with the specified indices from the ArrayList of frequent itemsets.
-        for (int i = 0; i < toRemove.size(); i++) {
-                   
-            // Removing any itemsets from the ArrayList will change the indices of the other 
-            // entries. Keep track of the number of items removed to compensate.
-            freqContents.remove(toRemove.get(i) - i);
-        }
-        
+               
         // Add the itemsets that are not subsets to the new frequent hash tree.
         for (int i = 0; i < freqContents.size(); i++) {
             newFrequent.add(freqContents.get(i).getHead(), freqContents.get(i));
@@ -330,30 +326,23 @@ public class DataMiner {
             candContents.add(iterator.next());
         }
         
-        ArrayList<Integer> toRemove = new ArrayList<>();
-        
         for (int i = 0; i < candContents.size(); i++) {
             for (int j = 0; j < freqContents.size(); j++) {
                 
                 // If the union of head and tail of any candidate group in the candidate hash tree is a
-                // subset of an itemset in the frequent hash tree, add the index of the candidate
-                // group to an ArrayList to be removed later. Make sure no index is
-                // addded multiple times.
-                if (subsetOf(candContents.get(i).union(), freqContents.get(j).getHead()) && !toRemove.contains(i)) {
-                    toRemove.add(i);
-                    // If a candidate group is determined to be a subset of a frequent
-                    // itemset, there is no need to search further. Exit the inner loop.
+                // subset of an itemset in the frequent hash tree, remove the item.
+                if (subsetOf(candContents.get(i).union(), freqContents.get(j).getHead())) {
+                    candContents.remove(i);
+                    
+                    // Removing a candidate itemset from the ArrayList will 
+                    // decrement the indices of all later itemsets. Decrement
+                    // the loop counter to compensate.
+                    i--;
+                    
+                    // If a candidate group is removed, exit the inner loop.
                     break;
                 }
             }
-        }
-        
-        // Remove the items with the specified indices from the ArrayList of candidate groups.
-        for (int i = 0; i < toRemove.size(); i++) {
-                   
-            // Removing any items from the ArrayList will change the indices of the other 
-            // entries. Keep track of the number of items removed to compensate.
-            candContents.remove(toRemove.get(i) - i);
         }
         
         // Add every candidate group that is not a subset of a frequent itemset 

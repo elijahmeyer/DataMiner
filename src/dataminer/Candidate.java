@@ -175,21 +175,17 @@ public class Candidate {
     */
     public void pruneTail(int minSupCount) {
         
-        // Store the indices of the tail items to be removed in an ArrayList.
-        ArrayList<Integer> removeTargets = new ArrayList<>();
         for (int i = 0; i < tailBuckets.size(); i++) {
             if (tailBuckets.get(i) < minSupCount) {
-                removeTargets.add(i);
+                
+                // Remove non-frequent items from the tail and tailBuckets.
+                tail.remove(i);
+                tailBuckets.remove(i);
+                
+                // Removing an item from the ArrayList will decrement the indices
+                // of all later items. Decrement the loop counter to compensate.
+                i--;
             }
-        }
-        
-        // Remove the items with the specified indices from the tail.
-        for (int i = 0; i < removeTargets.size(); i++) {
-                   
-            // Removing any items from the tail will change the indices of the other 
-            // entries. Keep track of the number of items removed to compensate.
-            tail.remove(removeTargets.get(i) - i);
-            tailBuckets.remove(removeTargets.get(i) - i);
         }
     }
     

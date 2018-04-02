@@ -8,6 +8,8 @@
  */
 
 package dataminer;
+import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -26,8 +28,8 @@ public class DataMiner {
      */
     public static void main(String[] args) {
         // Initialize variables.
-        //String filename = "C:\\Users\\Elijah\\Desktop\\T10I4D100K.txt";
-        String filename = "C:\\Users\\Elijah\\Desktop\\testDataset.txt";
+        String filename = "C:\\Users\\Elijah\\Desktop\\T10I4D100K.txt";
+        //String filename = "C:\\Users\\Elijah\\Desktop\\testDataset.txt";
         
         System.out.println("Reading in the database...");
         Database database = new Database(filename);        
@@ -39,8 +41,9 @@ public class DataMiner {
         System.out.println("Database read finished.");
         
         int numItems = database.getNumItems();
-        //final int SUPPORT_COUNT = (int) 0.3 * database.size();
-        final int SUPPORT_COUNT = 2;
+        final int SUPPORT_COUNT = (int) (0.005 * database.size());
+        System.out.println("Support Count: " + SUPPORT_COUNT);
+        //final int SUPPORT_COUNT = 2;
         
         // Count frequency of each item.
         System.out.println("Generating initial counts...");
@@ -79,18 +82,30 @@ public class DataMiner {
             groups = pruneCandidates(newGroups, frequent);
         }
         
-        // Print maximal frequent itemsets to the console.
+        // Print maximal frequent itemsets to the console and write them to a file.
         SearchByClass traverser = new SearchByClass(Candidate.class);
         frequent.traverse(traverser);
         Iterator<Candidate> iterator = traverser.getSearchResults().iterator();
-        System.out.println("\n\n\n\nFinal output:");
+                
+        try {
+            int extensionIndex = filename.lastIndexOf(".");
+            String resultsFileName = filename.substring(0, extensionIndex) + "Results.txt";
+            File results = new File(resultsFileName);
+            PrintWriter out = new PrintWriter(results);
         
-        while (iterator.hasNext()) {
-            ArrayList<Integer> temp = iterator.next().getHead();
-            for (int i = 0; i < temp.size(); i++) {
-                System.out.print(temp.get(i) + " ");
+            while (iterator.hasNext()) {
+                ArrayList<Integer> temp = iterator.next().getHead();
+                Collections.sort(temp);
+                for (int i = 0; i < temp.size(); i++) {
+                    out.print(temp.get(i) + " ");
+                    System.out.print(temp.get(i) + " ");
+                }
+                out.println("");          
+                System.out.println("");
             }
-            System.out.println("");          
+            out.close();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
     }
     

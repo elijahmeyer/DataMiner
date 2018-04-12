@@ -1,8 +1,8 @@
 /*
  * Elijah Meyer
- * update header
- *
- *
+ * CS 4710-01
+ * Dr. Soon Chung
+ * April 17, 2018
  *
  * This class defines the FrequentItem class and its data fields and methods.
  * This class contains an item and a count of that item's frequency in order to
@@ -10,11 +10,13 @@
  */ 
 package dataminer;
 
-public class FrequentItem implements Comparable<FrequentItem> {
+public class FrequentItem implements Comparable<FrequentItem> 
+{
     private int item;
     private int count;
     
-    public FrequentItem(int i, int c) {
+    public FrequentItem(int i, int c) 
+    {
         item = i;
         count = c;
     }
@@ -23,7 +25,8 @@ public class FrequentItem implements Comparable<FrequentItem> {
        Returns the item stored in this FrequentItem.
        @return the item
     */
-    public int getItem() {
+    public int getItem()
+    {
         return item;
     }
     
@@ -31,7 +34,8 @@ public class FrequentItem implements Comparable<FrequentItem> {
        Returns the frequency of the item stored in this FrequentItem.
        @return the item's frequency
     */
-    public int getCount() {
+    public int getCount() 
+    {
         return count;
     }
     
@@ -44,14 +48,18 @@ public class FrequentItem implements Comparable<FrequentItem> {
        FrequentItem submitted as a parameter
     */
     @Override
-    public int compareTo(FrequentItem f) {
-        if (count < f.getCount()) {
+    public int compareTo(FrequentItem f) 
+    {
+        if (count < f.getCount()) 
+        {
             return -1;
         }
-        else if (count == f.getCount()) {
+        else if (count == f.getCount()) 
+        {
             return 0;
         }
-        else {
+        else
+        {
             return 1;
         }
     }

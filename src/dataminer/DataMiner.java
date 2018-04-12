@@ -1,7 +1,8 @@
 /*
  * Elijah Meyer
- * Add header
- *
+ * CS 4710-01
+ * Dr. Soon Chung
+ * April 17, 2018
  *
  * This file contains the driver program and several methods used to implement
  * the MaxMiner data mining algorithm on a specified transaction database.
@@ -17,52 +18,54 @@ import org.apache.jorphan.collections.HashTree;
 import org.apache.jorphan.collections.SearchByClass;
 
 
-public class DataMiner {
+public class DataMiner 
+{
 
     /**
      * This method handles the main control loop, the data structures it needs,
-     * and reading in the input file. Because this program takes a very long time to
-     * run, this program prints statements to the console keeping the user 
-     * informed about what step of the algorithm it is currently on.
+     * and reading in the input file. Because this program longer than normal 
+     * programs to run, this program prints statements to the console keeping 
+     * the user informed about what step of the algorithm it is currently on.
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) 
+    {
         // Initialize variables.
-        String filename = "C:\\Users\\Elijah\\Desktop\\T10I4D100K.txt";
+        //String filename = "C:\\Users\\Elijah\\Desktop\\T10I4D100K.txt";
         //String filename = "C:\\Users\\Elijah\\Desktop\\testDataset.txt";
+        String filename = args[0];
         
         System.out.println("Reading in the database...");
         Database database = new Database(filename);        
         
         // If the database is empty, return.
-        if (database.getList() == null) {
+        if (database.getList() == null) 
+        {
             return;
         }
         System.out.println("Database read finished.");
         
         int numItems = database.getNumItems();
-        final int SUPPORT_COUNT = (int) (0.005 * database.size());
+        double supPercent = Double.parseDouble(args[1]) / 100.0;
+        
+        final int SUPPORT_COUNT = (int) Math.ceil(supPercent * database.size());
         System.out.println("Support Count: " + SUPPORT_COUNT);
         //final int SUPPORT_COUNT = 2;
-        
-        // Count frequency of each item.
-        System.out.println("Generating initial counts...");
-        int[] buckets = new int[numItems];
-        database.genInitialCounts(buckets);
-        System.out.println("Count successful.");
         
         // Convert frequent items into candidate groups.
         System.out.println("Generating initial groups...");
         HashTree groups = new HashTree();
         HashTree frequent = genInitialGroups(database, groups, numItems, SUPPORT_COUNT);
         
-        if (frequent == null) {
+        if (frequent == null) 
+        {
             return;
         }
         
         System.out.println("Generation successful.");
         
-        while (!groups.isEmpty()) {
+        while (!groups.isEmpty()) 
+        {
             System.out.println("Scanning database...");
             HashTree newGroups = new HashTree();
             
@@ -70,10 +73,12 @@ public class DataMiner {
             database.supportScan(groups);
             System.out.println("Scan complete.");
         
-            // Check support of each candidate groups's head united with each item in its tail.
+            // Check support of each candidate groups's head united with each 
+            // item in its tail.
             unpackCandidates(groups, newGroups, frequent, SUPPORT_COUNT);
             
-            // Remove any frequent itemsets that are subsets of other frequent itemsets.
+            // Remove any frequent itemsets that are subsets of other frequent 
+            // itemsets.
             frequent = pruneFrequents(frequent);
             
             // Remove any candidate groups from the new candidate hash tree
@@ -82,12 +87,14 @@ public class DataMiner {
             groups = pruneCandidates(newGroups, frequent);
         }
         
-        // Print maximal frequent itemsets to the console and write them to a file.
+        // Print maximal frequent itemsets to the console and write them to 
+        // a file.
         SearchByClass traverser = new SearchByClass(Candidate.class);
         frequent.traverse(traverser);
         Iterator<Candidate> iterator = traverser.getSearchResults().iterator();
                 
-        try {
+        try 
+        {
             int extensionIndex = filename.lastIndexOf(".");
             String resultsFileName = filename.substring(0, extensionIndex) + "Results.txt";
             File results = new File(resultsFileName);
@@ -110,32 +117,37 @@ public class DataMiner {
     }
     
     /*
-       Determines frequent items, sorts them from least to most frequent, and creates the intital
-       candidate groups based on this order. Candidate groups are created by making each frequent
-       item the head of a candidate group and making each more frequently ocurring item the tail of 
-       that group.
+       Determines frequent items, sorts them from least to most frequent, and 
+       creates the intital candidate groups based on this order. Candidate 
+       groups are created by making each frequent item the head of a candidate 
+       group and making each more frequently ocurring item the tail of that 
+       group.
        @param db - the database to be scanned
        @param groups - the hash tree to store the candidate groups
        @param numItems - the number of distinct items in the database
-       @param minSupCount - the minimum support count used to determine which items are frequent
-       @return a hash tree containing the candidate group whose head is the most frequently occurring 
-       item
+       @param minSupCount - the minimum support count used to determine which 
+       items are frequent
+       @return a hash tree containing the candidate group whose head is the 
+       most frequently occurring item
     */
     public static HashTree genInitialGroups(Database db, HashTree groups, int numItems, int minSupCount) {
         // Return if there are no items to use to make candidate groups.
-        if (numItems == 0) {
+        if (numItems == 0) 
+        {
             System.out.println("Error: No items detected.");
             return null;
         }
         
-        // Initialize the hash tree that will contain the maximal frequent itemsets.
+        // Initialize the hash tree that will contain the maximal frequent 
+        // itemsets.
         HashTree frequent = new HashTree();
         
         // Determine which items are frequent.
         ArrayList<FrequentItem> itemVectors = findFrequentItems(db, numItems, minSupCount);
         
         // Return if no items are frequent.
-        if (itemVectors.size() == 0) {
+        if (itemVectors.size() == 0) 
+        {
             System.out.println("Error: No frequent items detected.");
             return null;
         }
@@ -145,17 +157,19 @@ public class DataMiner {
         
         // Make each frequent item the head of a candidate group and make every
         // item that occurs more frequently the tail of that group.
-        for (int i = 0; i < itemVectors.size() - 1; i++) {
+        for (int i = 0; i < itemVectors.size() - 1; i++) 
+        {
             ArrayList<Integer> tail = new ArrayList<>();
-            for (int j = (i + 1); j < itemVectors.size(); j++) {
+            for (int j = (i + 1); j < itemVectors.size(); j++) 
+            {
                 tail.add(itemVectors.get(j).getItem());
             }
             ArrayList<Integer> head = new ArrayList<>();
             head.add(itemVectors.get(i).getItem());
             Candidate cand = new Candidate(head, tail);
             
-            // Use the head of each candidate group to hash that group into the candidate
-            // hash tree.
+            // Use the head of each candidate group to hash that group into the
+            // candidate hash tree.
             groups.add(cand.getHead(), cand);
         }
         
@@ -175,18 +189,22 @@ public class DataMiner {
        the given support count.
        @param db - the database to be scanned
        @param numItems - the number of distinct items in db
-       @param minSupCount - the minimum support count used to determine which items are frequent
+       @param minSupCount - the minimum support count used to determine which 
+       items are frequent
        @return an ArrayList containing each frequent item and its count
     */
-    public static ArrayList<FrequentItem> findFrequentItems(Database db, int numItems, int minSupCount) {
+    public static ArrayList<FrequentItem> findFrequentItems(Database db, int numItems, int minSupCount) 
+    {
         // Count occurrences of each item.
         int[] buckets = new int[numItems];
         db.genInitialCounts(buckets);
         
         // Place the frequent items and their counts in an ArrayList and return.
         ArrayList<FrequentItem> itemVectors = new ArrayList<>();
-        for (int i = 0; i < buckets.length; i++) {
-            if(buckets[i] >= minSupCount) {
+        for (int i = 0; i < buckets.length; i++) 
+        {
+            if(buckets[i] >= minSupCount) 
+            {
                 FrequentItem temp = new FrequentItem(i, buckets[i]);
                 itemVectors.add(temp);
             }
@@ -195,18 +213,21 @@ public class DataMiner {
     }
     
     /*
-       Processes each candidate group in the search for maximal frequent itemsets. 
-       If the group's head united with its tail is a frequent itemset, this itemset is added
-       to the frequent hash tree. If not, several candidate groups, consisting of the 
-       group's head united with each item in its tail, are added to the new candidate hash tree.
-       However, the candidate group consisting of the head united with the tail's most
+       Processes each candidate group in the search for maximal frequent
+       itemsets. If the group's head united with its tail is a frequent itemset,
+       this itemset is added to the frequent hash tree. If not, several 
+       candidate groups, consisting of the group's head united with each item 
+       in its tail, are added to the new candidate hash tree. However, the 
+       candidate group consisting of the head united with the tail's most
        frequent item is instead added to the frequent hash tree.
        @param cand - the hash tree containing the candidate groups
        @param newCand - the hash tree to contain the new candidate groups
        @param freq - the tree to contain the frequent itemsets
-       @param minSupCount - the minimum support count used to determine which itemsets are frequent
+       @param minSupCount - the minimum support count used to determine which 
+       itemsets are frequent
     */
-    public static void unpackCandidates(HashTree cand, HashTree newCand, HashTree freq, int minSupCount) {
+    public static void unpackCandidates(HashTree cand, HashTree newCand, HashTree freq, int minSupCount) 
+    {
         // Traverse the candidate hash tree.
         SearchByClass traverser = new SearchByClass(Candidate.class);
         cand.traverse(traverser);
@@ -217,22 +238,25 @@ public class DataMiner {
             // If the candidate group's head united with its tail is a frequent
             // itemset, add it to the frequent hash tree.
             Candidate temp = iterator.next();
-            if (temp.getUnionCount() >= minSupCount) {
+            if (temp.getUnionCount() >= minSupCount) 
+            {
                 ArrayList<Integer> frequent = new ArrayList<>();
               
                 // The itemset is copied instead of being directly passed to the
-                // hash tree to avoid changes made to the candidate tree affecting
-                // the frequent tree.
+                // hash tree to avoid changes made to the candidate tree 
+                // affecting the frequent tree.
                 frequent.addAll(temp.union());
                 Candidate c = new Candidate(frequent, new ArrayList<>());
                 freq.add(c.getHead(), c);
             }
-            else {
+            else 
+            {
                 
-                // If the head united with the tail is infrequent, create new candidate
-                // groups that consist of the head united with each item in the tail.
-                // Place all except the one containing the most frequent tail item in 
-                // the candidate hash tree. Place that one in the frequent hash tree.
+                // If the head united with the tail is infrequent, create new 
+                // candidate groups that consist of the head united with each 
+                // item in the tail. Place all except the one containing the 
+                // most frequent tail item in the candidate hash tree. Place 
+                // that one in the frequent hash tree.
                 Candidate largestFrequent = temp.genSubNodes(newCand, minSupCount);
                 freq.add(largestFrequent.getHead(), largestFrequent);
             }
@@ -242,15 +266,19 @@ public class DataMiner {
     /*
       Determines whether an ArrayList of integers is a subset of another.
       @param subset - the ArrayList to be tested for being a subset of the other
-      @param superset - the ArrayList to be tested for being a superset of the other
-      @return a boolean value reflecting whether the possible subset is a subset of
-      the possible superset
+      @param superset - the ArrayList to be tested for being a superset of the 
+      other
+      @return a boolean value reflecting whether the possible subset is a subset
+      of the possible superset
     */
-    public static boolean subsetOf(ArrayList<Integer> subset, ArrayList<Integer> superset) {
+    public static boolean subsetOf(ArrayList<Integer> subset, ArrayList<Integer> superset) 
+    {
         // Count how many items in subset are in superset.
         int supportCount = 0;
-        for (int i = 0; i < subset.size(); i++) {
-            if (superset.contains(subset.get(i))) {
+        for (int i = 0; i < subset.size(); i++)
+        {
+            if (superset.contains(subset.get(i))) 
+            {
                 supportCount++;
             }
         }
@@ -260,12 +288,13 @@ public class DataMiner {
     }
     
     /*
-       Removes all itemsets from a frequent hash tree that are subsets of another
-       itemset in that hash tree.
+       Removes all itemsets from a frequent hash tree that are subsets of
+       another itemset in that hash tree.
        @param freq - the frequent hash tree to be trimmed
        @return the trimmed frequent hash tree
     */
-    public static HashTree pruneFrequents(HashTree freq) {
+    public static HashTree pruneFrequents(HashTree freq) 
+    {
         // Initialize variables.
         HashTree newFrequent = new HashTree();
         ArrayList<Candidate> freqContents = new ArrayList<>();
@@ -275,28 +304,35 @@ public class DataMiner {
         freq.traverse(traverser);
         Iterator<Candidate> iterator = traverser.getSearchResults().iterator();
         
-        while (iterator.hasNext()) {
+        while (iterator.hasNext()) 
+        {
             freqContents.add(iterator.next());
         }
         
-        for (int i = 0; i < freqContents.size(); i++) {
-            for (int j = i + 1; j < freqContents.size(); j++) {
+        for (int i = 0; i < freqContents.size(); i++) 
+        {
+            for (int j = i + 1; j < freqContents.size(); j++) 
+            {
                 
                 // If any itemset in the array is a subset of another itemset, 
                 // remove it from the ArrayList.
-                if (subsetOf(freqContents.get(i).getHead(), freqContents.get(j).getHead())) {
+                if (subsetOf(freqContents.get(i).getHead(), freqContents.get(j).getHead())) 
+                {
                     freqContents.remove(i);
                     
-                    // Removing an itemset from the ArrayList will decrement the indices
-                    // of all later itemsets. Decrement the loop counter to compensate.
+                    // Removing an itemset from the ArrayList will decrement the 
+                    // indices of all later itemsets. Decrement the loop counter
+                    // to compensate.
                     i--;
                     
                     // Once the itemset is removed, exit the inner loop.
                     break;
                 }
                 
-                // Check the itemsets in the other order to make programming easier.
-                else if (subsetOf(freqContents.get(j).getHead(), freqContents.get(i).getHead())) {
+                // Check the itemsets in the other order to make programming 
+                // easier.
+                else if (subsetOf(freqContents.get(j).getHead(), freqContents.get(i).getHead())) 
+                {
                     freqContents.remove(j);
                     
                     // Decrement the loop counter for the reason stated above.
@@ -306,7 +342,8 @@ public class DataMiner {
         }
                
         // Add the itemsets that are not subsets to the new frequent hash tree.
-        for (int i = 0; i < freqContents.size(); i++) {
+        for (int i = 0; i < freqContents.size(); i++) 
+        {
             newFrequent.add(freqContents.get(i).getHead(), freqContents.get(i));
         }
         
@@ -321,37 +358,46 @@ public class DataMiner {
        @param freq - the frequent hash tree to be compared against
        @return the trimmed candidate hash tree
     */
-    public static HashTree pruneCandidates(HashTree cand, HashTree freq) {
+    public static HashTree pruneCandidates(HashTree cand, HashTree freq) 
+    {
         // Initialize variables.
         HashTree newCand = new HashTree();
         ArrayList<Candidate> freqContents = new ArrayList<>();
         
-        // Iterate through the frequent hash tree and add its contents to an ArrayList.
+        // Iterate through the frequent hash tree and add its contents to an 
+        // ArrayList.
         SearchByClass traverser = new SearchByClass(Candidate.class);
         freq.traverse(traverser);
         Iterator<Candidate> iterator = traverser.getSearchResults().iterator();
         
-        while (iterator.hasNext()) {
+        while (iterator.hasNext()) 
+        {
             freqContents.add(iterator.next());
         }
      
-        // Iterate through the candidate hash tree and add its contents to an ArrayList.
+        // Iterate through the candidate hash tree and add its contents to an 
+        // ArrayList.
         ArrayList<Candidate> candContents = new ArrayList<>();
      
         traverser = new SearchByClass(Candidate.class);
         cand.traverse(traverser);
         iterator = traverser.getSearchResults().iterator();
         
-        while (iterator.hasNext()) {
+        while (iterator.hasNext()) 
+        {
             candContents.add(iterator.next());
         }
         
-        for (int i = 0; i < candContents.size(); i++) {
-            for (int j = 0; j < freqContents.size(); j++) {
+        for (int i = 0; i < candContents.size(); i++) 
+        {
+            for (int j = 0; j < freqContents.size(); j++) 
+            {
                 
-                // If the union of head and tail of any candidate group in the candidate hash tree is a
-                // subset of an itemset in the frequent hash tree, remove the item.
-                if (subsetOf(candContents.get(i).union(), freqContents.get(j).getHead())) {
+                // If the union of head and tail of any candidate group in the 
+                // candidate hash tree is a subset of an itemset in the frequent
+                // hash tree, remove the item.
+                if (subsetOf(candContents.get(i).union(), freqContents.get(j).getHead())) 
+                {
                     candContents.remove(i);
                     
                     // Removing a candidate itemset from the ArrayList will 
@@ -367,7 +413,8 @@ public class DataMiner {
         
         // Add every candidate group that is not a subset of a frequent itemset 
         // to the new candidate hash tree.
-        for (int i = 0; i < candContents.size(); i++) {
+        for (int i = 0; i < candContents.size(); i++) 
+        {
             newCand.add(candContents.get(i).getHead(), candContents.get(i));
         }
         

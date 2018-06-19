@@ -31,9 +31,8 @@ public class DataMiner
     public static void main(String[] args) 
     {
         // Initialize variables.
-        //String filename = "C:\\Users\\Elijah\\Desktop\\T10I4D100K.txt";
-        //String filename = "C:\\Users\\Elijah\\Desktop\\testDataset.txt";
-        String filename = args[0];
+        String filename = "C:\\Users\\Elijah\\Desktop\\T10I4D100K.txt";
+        //String filename = args[0];
         
         System.out.println("Reading in the database...");
         Database database = new Database(filename);        
@@ -46,11 +45,11 @@ public class DataMiner
         System.out.println("Database read finished.");
         
         int numItems = database.getNumItems();
-        double supPercent = Double.parseDouble(args[1]) / 100.0;
+        //double supPercent = Double.parseDouble(args[1]) / 100.0;
+        double supPercent = 0.1 / 100.0;
         
         final int SUPPORT_COUNT = (int) Math.ceil(supPercent * database.size());
         System.out.println("Support Count: " + SUPPORT_COUNT);
-        //final int SUPPORT_COUNT = 2;
         
         // Convert frequent items into candidate groups.
         System.out.println("Generating initial groups...");
@@ -100,6 +99,7 @@ public class DataMiner
             File results = new File(resultsFileName);
             PrintWriter out = new PrintWriter(results);
         
+            int setCount = 0;
             while (iterator.hasNext()) {
                 ArrayList<Integer> temp = iterator.next().getHead();
                 Collections.sort(temp);
@@ -109,8 +109,10 @@ public class DataMiner
                 }
                 out.println("");          
                 System.out.println("");
+                setCount++;
             }
             out.close();
+            System.out.println(setCount + " maximal frequent itemsets.");
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }

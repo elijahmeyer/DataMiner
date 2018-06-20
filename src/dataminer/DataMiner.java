@@ -2,10 +2,13 @@
  * Elijah Meyer
  * CS 4710-01
  * Dr. Soon Chung
- * April 17, 2018
+ * June 20, 2018
  *
  * This file contains the driver program and several methods used to implement
- * the MaxMiner data mining algorithm on a specified transaction database.
+ * the MaxMiner data mining algorithm on a specified transaction database. 
+ * This particular version of the program uses the m-step lookahead method, an
+ * experimental method that scans the first m items in a candidate group's tail
+ * on each pass instead of the entire tail.
  */
 
 package dataminer;

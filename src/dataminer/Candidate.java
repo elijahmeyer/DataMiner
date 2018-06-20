@@ -24,12 +24,14 @@ public class Candidate
     private ArrayList<Integer> tail = new ArrayList<>();
     private ArrayList<Integer> tailBuckets = new ArrayList<>();
     private int unionCount = 0;
-    
+    private boolean lookahead;
     
     public Candidate(ArrayList<Integer> h, ArrayList<Integer> t) 
     {
         head = h;
         tail = t;
+        lookahead = tail.size() > 5;
+        
         // tailBuckets keeps track of the support count of the Candidate's head
         // united with each item in the tail.
         tailBuckets = genTailBuckets();
@@ -57,7 +59,15 @@ public class Candidate
     private ArrayList<Integer> genTailBuckets() 
     {
         ArrayList<Integer> buckets = new ArrayList<>();
-        for (int i = 0; i < tail.size(); i++) 
+        int bucketCount = 0;
+        if (lookahead) {
+            bucketCount = 5;
+        }
+        else {
+            bucketCount = tail.size();
+        }
+        
+        for (int i = 0; i < bucketCount; i++) 
         {
             buckets.add(0);
         }
@@ -219,6 +229,16 @@ public class Candidate
     public ArrayList<Integer> getTail() 
     {
         return tail;
+    }
+    
+    /*
+       Returns whether or not the Candidate has more items in the tail than it
+       is counting due to the lookahead method.
+       @return - a boolean reflecting whether or not this is the case
+    */
+    public boolean isLookahead() 
+    {
+        return lookahead;
     }
     
     /*

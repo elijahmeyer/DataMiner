@@ -24,13 +24,12 @@ public class Candidate
     private ArrayList<Integer> tail = new ArrayList<>();
     private ArrayList<Integer> tailBuckets = new ArrayList<>();
     private int unionCount = 0;
-    private boolean lookahead;
+    private final int lookaheadCount = 5;
     
     public Candidate(ArrayList<Integer> h, ArrayList<Integer> t) 
     {
         head = h;
         tail = t;
-        lookahead = tail.size() > 5;
         
         // tailBuckets keeps track of the support count of the Candidate's head
         // united with each item in the tail.
@@ -46,7 +45,15 @@ public class Candidate
     {
         ArrayList<Integer> union = new ArrayList<>();
         union.addAll(head);
-        union.addAll(tail);
+        
+        if (tail.size() <= lookaheadCount) {
+            union.addAll(tail);
+        }
+        else {
+            for (int i = 0; i < lookaheadCount; i++) {
+                union.add(tail.get(i));
+            }
+        }
         return union;
     }
     
@@ -59,15 +66,8 @@ public class Candidate
     private ArrayList<Integer> genTailBuckets() 
     {
         ArrayList<Integer> buckets = new ArrayList<>();
-        int bucketCount = 0;
-        if (lookahead) {
-            bucketCount = 5;
-        }
-        else {
-            bucketCount = tail.size();
-        }
         
-        for (int i = 0; i < bucketCount; i++) 
+        for (int i = 0; i < tail.size(); i++) 
         {
             buckets.add(0);
         }
@@ -75,7 +75,7 @@ public class Candidate
     }
     
     /*
-       Determines whether the union of the Candidate's head and tail is in 
+       Determines whether the union of the Candidate's head and the first m tail items is in 
        the given transaction and whether the union of the head and each item
        in the tail is in the transaction. Increments the support counts of any
        itemsets that do appear in the transaction.
@@ -96,7 +96,9 @@ public class Candidate
             {
                 // Determine whether every item in the Candidate's head and tail
                 // is in the transaction.
-                itemCount++;
+                if (i < lookaheadCount) {
+                    itemCount++;
+                }
                 
                 // If the Candidate's head and an item in the tail appear in the 
                 // transaction, increment the tail item's corresponding 
@@ -107,9 +109,23 @@ public class Candidate
         
         // If the count of items that appear in transaction is the same as the 
         // size of union, increment union count.
-        if (itemCount == tail.size()) 
+        if (itemCount == lookaheadCount || itemCount == tail.size()) 
         {
             unionCount++;
+        }
+    }
+    
+    public void loadTailItems() {
+        if (tail.size() < lookaheadCount) {
+            head.addAll(tail);
+        }
+        else {
+            for (int i = 0; i < lookaheadCount; i++) {
+                // Removing the first item from the tail and tailBuckets ArrayLists
+                // will shift the index of all other items
+                head.add(tail.remove(0));
+                tailBuckets.remove(0);
+            }
         }
     }
     
@@ -229,16 +245,6 @@ public class Candidate
     public ArrayList<Integer> getTail() 
     {
         return tail;
-    }
-    
-    /*
-       Returns whether or not the Candidate has more items in the tail than it
-       is counting due to the lookahead method.
-       @return - a boolean reflecting whether or not this is the case
-    */
-    public boolean isLookahead() 
-    {
-        return lookahead;
     }
     
     /*

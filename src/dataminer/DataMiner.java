@@ -34,7 +34,7 @@ public class DataMiner
     public static void main(String[] args) 
     {
         // Initialize variables.
-        String filename = "C:\\Users\\Elijah\\Desktop\\T10I4D100K.txt";
+        String filename = "C:\\Users\\Elijah\\Desktop\\MaxMiner Stuff\\T10I4D100K.txt";
         //String filename = args[0];
         
         System.out.println("Reading in the database...");
@@ -98,7 +98,7 @@ public class DataMiner
         try 
         {
             int extensionIndex = filename.lastIndexOf(".");
-            String resultsFileName = filename.substring(0, extensionIndex) + "Results.txt";
+            String resultsFileName = filename.substring(0, extensionIndex) + "LookaheadResults.txt";
             File results = new File(resultsFileName);
             PrintWriter out = new PrintWriter(results);
         
@@ -245,26 +245,16 @@ public class DataMiner
             Candidate temp = iterator.next();
             if (temp.getUnionCount() >= minSupCount) 
             {
-                ArrayList<Integer> frequent = new ArrayList<>();
-              
-                // The itemset is copied instead of being directly passed to the
-                // hash tree to avoid changes made to the candidate tree 
-                // affecting the frequent tree.
-                frequent.addAll(temp.union());
-                Candidate c = new Candidate(frequent, new ArrayList<>());
-                freq.add(c.getHead(), c);
+                temp.loadTailItems();
             }
-            else 
-            {
                 
-                // If the head united with the tail is infrequent, create new 
-                // candidate groups that consist of the head united with each 
-                // item in the tail. Place all except the one containing the 
-                // most frequent tail item in the candidate hash tree. Place 
-                // that one in the frequent hash tree.
-                Candidate largestFrequent = temp.genSubNodes(newCand, minSupCount);
-                freq.add(largestFrequent.getHead(), largestFrequent);
-            }
+            // If the head united with the tail is infrequent, create new 
+            // candidate groups that consist of the head united with each 
+            // item in the tail. Place all except the one containing the 
+            // most frequent tail item in the candidate hash tree. Place 
+            // that one in the frequent hash tree.
+            Candidate largestFrequent = temp.genSubNodes(newCand, minSupCount);
+            freq.add(largestFrequent.getHead(), largestFrequent);
         }
     }
     

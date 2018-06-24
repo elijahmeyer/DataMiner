@@ -34,7 +34,8 @@ public class DataMiner
     public static void main(String[] args) 
     {
         // Initialize variables.
-        String filename = "C:\\Users\\Elijah\\Desktop\\MaxMiner Stuff\\T10I4D100K.txt";
+        //String filename = "C:\\Users\\Elijah\\Desktop\\MaxMiner Stuff\\T10I4D100K.txt";
+        String filename = "C:\\Users\\Elijah\\Desktop\\MaxMiner Stuff\\testDataset.txt";
         //String filename = args[0];
         
         System.out.println("Reading in the database...");
@@ -51,7 +52,8 @@ public class DataMiner
         //double supPercent = Double.parseDouble(args[1]) / 100.0;
         double supPercent = 0.1 / 100.0;
         
-        final int SUPPORT_COUNT = (int) Math.ceil(supPercent * database.size());
+        //final int SUPPORT_COUNT = (int) Math.ceil(supPercent * database.size());
+        final int SUPPORT_COUNT = 2;
         System.out.println("Support Count: " + SUPPORT_COUNT);
         
         // Convert frequent items into candidate groups.
@@ -151,7 +153,7 @@ public class DataMiner
         ArrayList<FrequentItem> itemVectors = findFrequentItems(db, numItems, minSupCount);
         
         // Return if no items are frequent.
-        if (itemVectors.size() == 0) 
+        if (itemVectors.isEmpty()) 
         {
             System.out.println("Error: No frequent items detected.");
             return null;

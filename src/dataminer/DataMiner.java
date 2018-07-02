@@ -249,16 +249,32 @@ public class DataMiner
             Candidate temp = iterator.next();
             if (temp.getUnionCount() >= minSupCount) 
             {
+                // This is wrong! This says that {1,2,3,4,5} and the tail items
+                // have a support of x, but really x is the support of {1} and the tail item
                 temp.loadTailItems();
+                temp.pruneTail(minSupCount);
+                if (temp.getTail().isEmpty()) {
+                    freq.add(temp.getHead(), temp);
+                }
+                else {
+                    ArrayList<Integer> newHead = new ArrayList<>();
+                    newHead.addAll(temp.getHead());
+                    ArrayList<Integer> newTail = new ArrayList<>();
+                    newTail.addAll(temp.getTail());
+                    
+                    Candidate newCandidate = new Candidate(newHead, newTail);
+                    newCand.add(newCandidate.getHead(), newCandidate);
+                }
             }
-                
-            // If the head united with the tail is infrequent, create new 
-            // candidate groups that consist of the head united with each 
-            // item in the tail. Place all except the one containing the 
-            // most frequent tail item in the candidate hash tree. Place 
-            // that one in the frequent hash tree.
-            Candidate largestFrequent = temp.genSubNodes(newCand, minSupCount);
-            freq.add(largestFrequent.getHead(), largestFrequent);
+            else {
+                // If the head united with the tail is infrequent, create new 
+                // candidate groups that consist of the head united with each 
+                // item in the tail. Place all except the one containing the 
+                // most frequent tail item in the candidate hash tree. Place 
+                // that one in the frequent hash tree.
+                Candidate largestFrequent = temp.genSubNodes(newCand, minSupCount);
+                freq.add(largestFrequent.getHead(), largestFrequent);
+            }
         }
     }
     

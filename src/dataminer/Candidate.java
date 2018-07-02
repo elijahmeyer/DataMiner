@@ -251,6 +251,14 @@ public class Candidate
         return tail;
     }
     
+    public ArrayList<Integer> fullUnion() 
+    {
+        ArrayList<Integer> full = new ArrayList<>();
+        full.addAll(head);
+        full.addAll(tail);
+        return full;
+    }
+    
     /*
        Returns the support count of the Candidate's head united with its tail.
        @return - the count of the calling Candidate's head united with its tail

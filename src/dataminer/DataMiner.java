@@ -34,8 +34,8 @@ public class DataMiner
     public static void main(String[] args) 
     {
         // Initialize variables.
-        String filename = "C:\\Users\\Elijah\\Desktop\\MaxMiner Stuff\\T10I4D100K.txt";
-        //String filename = "C:\\Users\\Elijah\\Desktop\\MaxMiner Stuff\\testDataset.txt";
+        //String filename = "C:\\Users\\Elijah\\Desktop\\MaxMiner Stuff\\T10I4D100K.txt";
+        String filename = "C:\\Users\\Elijah\\Desktop\\MaxMiner Stuff\\testDataset.txt";
         //String filename = args[0];
         
         System.out.println("Reading in the database...");
@@ -52,8 +52,8 @@ public class DataMiner
         //double supPercent = Double.parseDouble(args[1]) / 100.0;
         double supPercent = 0.15 / 100.0;
         
-        final int SUPPORT_COUNT = (int) Math.ceil(supPercent * database.size());
-        //final int SUPPORT_COUNT = 2;
+        //final int SUPPORT_COUNT = (int) Math.ceil(supPercent * database.size());
+        final int SUPPORT_COUNT = 2;
         System.out.println("Support Count: " + SUPPORT_COUNT);
         
         // Convert frequent items into candidate groups.
@@ -174,7 +174,7 @@ public class DataMiner
             ArrayList<Integer> head = new ArrayList<>();
             head.add(itemVectors.get(i).getItem());
             Candidate cand = new Candidate(head, tail);
-            //System.out.println(cand.toString());
+            System.out.println(cand.toString());
             
             // Use the head of each candidate group to hash that group into the
             // candidate hash tree.
@@ -187,7 +187,7 @@ public class DataMiner
         head.add(itemVectors.get(itemVectors.size() - 1).getItem());
         Candidate c = new Candidate(head, new ArrayList<>());
         frequent.add(c.getHead(), c);
-        //System.out.println(c.toString());
+        System.out.println(c.toString());
         
         // Return the frequent hash tree.
         return frequent;
@@ -254,7 +254,15 @@ public class DataMiner
                 temp.loadTailItems();
                 temp.pruneTail(minSupCount);
                 if (temp.getTail().isEmpty()) {
-                    freq.add(temp.getHead(), temp);
+                    ArrayList<Integer> newHead = new ArrayList<>();
+                    newHead.addAll(temp.getHead());
+                    ArrayList<Integer> newTail = new ArrayList<>();
+                    newTail.addAll(temp.getTail());
+                    ArrayList<Integer> newTailBuckets = new ArrayList<>();
+                    newTailBuckets.addAll(temp.getTailBuckets());
+                    Candidate newCandidate = new Candidate(newHead, newTail, newTailBuckets);
+                    freq.add(newCandidate.getHead(), newCandidate);
+                    //freq.add(temp.getHead(), temp);
                 }
                 else {
                     ArrayList<Integer> newHead = new ArrayList<>();

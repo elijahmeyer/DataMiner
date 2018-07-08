@@ -36,6 +36,13 @@ public class Candidate
         tailBuckets = genTailBuckets();
     }
     
+    public Candidate(ArrayList<Integer> h, ArrayList<Integer> t, ArrayList<Integer> tb) 
+    {
+        head = h;
+        tail = t;
+        tailBuckets = tb;
+    }
+    
     /*
        Returns the union of the Candidate's head and tail lists.
        This helps find maximal frequent itemsets.
@@ -107,6 +114,7 @@ public class Candidate
             }
         }
         
+        //ArrayList<Integer> lookaheadTail = new ArrayList<>();
         // If the count of items that appear in transaction is the same as the 
         // size of union, increment union count.
         if (itemCount == lookaheadCount || itemCount == tail.size()) 
@@ -186,7 +194,7 @@ public class Candidate
                 // Store the new Candidates in the candidate hash tree.
                 Candidate nextCandidate = new Candidate(nextHead, nextTail);
                 cand.add(nextCandidate.getHead(), nextCandidate);
-                //System.out.println(nextCandidate.toString());
+                System.out.println(nextCandidate.toString());
             }
             
             // Return the final Candidate, whose head is composed of the old 
@@ -196,7 +204,7 @@ public class Candidate
             newHead.addAll(head);
             newHead.add(tailItems.get(tailItems.size() - 1).getItem());
             Candidate next = new Candidate(newHead, new ArrayList<>());
-            //System.out.println(next.toString());
+            System.out.println(next.toString());
             return next;            
         }
         
@@ -204,7 +212,7 @@ public class Candidate
         ArrayList<Integer> newHead = new ArrayList<>();
         newHead.addAll(head);
         Candidate c = new Candidate(newHead, new ArrayList<>());
-        //System.out.println(c.toString());
+        System.out.println(c.toString());
         return c;
     }
     
@@ -250,6 +258,15 @@ public class Candidate
     public ArrayList<Integer> getTail() 
     {
         return tail;
+    }
+    
+    /*
+       Returns the Candidate's tail buckets.
+       @return - the tail buckets of the calling Candidate
+    */
+    public ArrayList<Integer> getTailBuckets() 
+    {
+        return tailBuckets;
     }
     
     public ArrayList<Integer> fullUnion() 

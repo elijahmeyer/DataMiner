@@ -314,6 +314,8 @@ public class Candidate
         {
             message += tailBuckets.get(k) + " ";
         }
+        
+        message += "\nUnion Count: " + unionCount;
         return message;
     }
 }

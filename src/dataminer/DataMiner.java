@@ -34,8 +34,8 @@ public class DataMiner
     public static void main(String[] args) 
     {
         // Initialize variables.
-        //String filename = "C:\\Users\\Elijah\\Desktop\\MaxMiner Stuff\\T10I4D100K.txt";
-        String filename = "C:\\Users\\Elijah\\Desktop\\MaxMiner Stuff\\testDataset.txt";
+        String filename = "C:\\Users\\Elijah\\Desktop\\MaxMiner Stuff\\T10I4D100K.txt";
+        //String filename = "C:\\Users\\Elijah\\Desktop\\MaxMiner Stuff\\testDataset.txt";
         //String filename = args[0];
         
         System.out.println("Reading in the database...");
@@ -52,8 +52,8 @@ public class DataMiner
         //double supPercent = Double.parseDouble(args[1]) / 100.0;
         double supPercent = 0.15 / 100.0;
         
-        //final int SUPPORT_COUNT = (int) Math.ceil(supPercent * database.size());
-        final int SUPPORT_COUNT = 2;
+        final int SUPPORT_COUNT = (int) Math.ceil(supPercent * database.size());
+        //final int SUPPORT_COUNT = 2;
         System.out.println("Support Count: " + SUPPORT_COUNT);
         
         // Convert frequent items into candidate groups.
@@ -241,12 +241,14 @@ public class DataMiner
         SearchByClass traverser = new SearchByClass(Candidate.class);
         cand.traverse(traverser);
         Iterator<Candidate> iterator = traverser.getSearchResults().iterator();
-        
+        System.out.println("Unpacking candidates...");
         while (iterator.hasNext()) {
             
             // If the candidate group's head united with its tail is a frequent
             // itemset, add it to the frequent hash tree.
             Candidate temp = iterator.next();
+            System.out.println("Before:");
+            System.out.println(temp.toString());
             if (temp.getUnionCount() >= minSupCount) 
             {
                 // This is wrong! This says that {1,2,3,4,5} and the tail items
@@ -283,7 +285,10 @@ public class DataMiner
                 Candidate largestFrequent = temp.genSubNodes(newCand, minSupCount);
                 freq.add(largestFrequent.getHead(), largestFrequent);
             }
+            System.out.println("After:");
+            System.out.println(temp.toString());
         }
+        System.out.println("Unpacking complete.");
     }
     
     /*

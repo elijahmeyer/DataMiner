@@ -50,7 +50,7 @@ public class DataMiner
         
         int numItems = database.getNumItems();
         //double supPercent = Double.parseDouble(args[1]) / 100.0;
-        double supPercent = 0.25 / 100.0;
+        double supPercent = 0.15 / 100.0;
         
         final int SUPPORT_COUNT = (int) Math.ceil(supPercent * database.size());
         //final int SUPPORT_COUNT = 2;
@@ -411,7 +411,7 @@ public class DataMiner
                 // If the union of head and tail of any candidate group in the 
                 // candidate hash tree is a subset of an itemset in the frequent
                 // hash tree, remove the item.
-                if (subsetOf(candContents.get(i).union(), freqContents.get(j).getHead())) 
+                if (subsetOf(candContents.get(i).fullUnion(), freqContents.get(j).getHead())) 
                 {
                     candContents.remove(i);
                     

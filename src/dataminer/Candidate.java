@@ -119,6 +119,7 @@ public class Candidate
         if (tail.size() < lookaheadCount) {
             head.addAll(tail);
             tail.clear();
+            tailBuckets.clear();
         }
         else {
             for (int i = 0; i < lookaheadCount; i++) {

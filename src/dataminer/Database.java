@@ -149,14 +149,14 @@ public class Database
             }
             
             // Inform the user of the progress made thus far.
-            //System.out.println("Transaction " + (i + 1) + " of " + database.size() + " scanned.");
+            System.out.println("Transaction " + (i + 1) + " of " + database.size() + " scanned.");
 
             // If no Candidate's head appears in a transaction, prune that 
             // transaction. 
             if (usedCount == 0) 
             {
                 database.remove(i);
-                //System.out.println("Transaction " + (i + 1) + " deleted.");
+                System.out.println("Transaction " + (i + 1) + " deleted.");
                 i--;
             }
         }

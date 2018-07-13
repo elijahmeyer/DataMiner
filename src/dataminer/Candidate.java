@@ -123,7 +123,8 @@ public class Candidate
         }
     }
     
-    public void loadTailItems() {
+    public void loadTailItems() 
+    {
         if (tail.size() < lookaheadCount) {
             head.addAll(tail);
             tail.clear();
@@ -194,7 +195,7 @@ public class Candidate
                 // Store the new Candidates in the candidate hash tree.
                 Candidate nextCandidate = new Candidate(nextHead, nextTail);
                 cand.add(nextCandidate.getHead(), nextCandidate);
-                System.out.println(nextCandidate.toString());
+                //System.out.println(nextCandidate.toString());
             }
             
             // Return the final Candidate, whose head is composed of the old 
@@ -204,7 +205,7 @@ public class Candidate
             newHead.addAll(head);
             newHead.add(tailItems.get(tailItems.size() - 1).getItem());
             Candidate next = new Candidate(newHead, new ArrayList<>());
-            System.out.println(next.toString());
+            //System.out.println(next.toString());
             return next;            
         }
         
@@ -212,7 +213,7 @@ public class Candidate
         ArrayList<Integer> newHead = new ArrayList<>();
         newHead.addAll(head);
         Candidate c = new Candidate(newHead, new ArrayList<>());
-        System.out.println(c.toString());
+        //System.out.println(c.toString());
         return c;
     }
     

@@ -174,7 +174,7 @@ public class DataMiner
             ArrayList<Integer> head = new ArrayList<>();
             head.add(itemVectors.get(i).getItem());
             Candidate cand = new Candidate(head, tail);
-            System.out.println(cand.toString());
+            //System.out.println(cand.toString());
             
             // Use the head of each candidate group to hash that group into the
             // candidate hash tree.
@@ -187,7 +187,7 @@ public class DataMiner
         head.add(itemVectors.get(itemVectors.size() - 1).getItem());
         Candidate c = new Candidate(head, new ArrayList<>());
         frequent.add(c.getHead(), c);
-        System.out.println(c.toString());
+        //System.out.println(c.toString());
         
         // Return the frequent hash tree.
         return frequent;
@@ -247,8 +247,8 @@ public class DataMiner
             // If the candidate group's head united with its tail is a frequent
             // itemset, add it to the frequent hash tree.
             Candidate temp = iterator.next();
-            System.out.println("Before:");
-            System.out.println(temp.toString());
+            //System.out.println("Before:");
+            //System.out.println(temp.toString());
             if (temp.getUnionCount() >= minSupCount) 
             {
                 // This is wrong! This says that {1,2,3,4,5} and the tail items
@@ -258,13 +258,11 @@ public class DataMiner
                 if (temp.getTail().isEmpty()) {
                     ArrayList<Integer> newHead = new ArrayList<>();
                     newHead.addAll(temp.getHead());
-                    ArrayList<Integer> newTail = new ArrayList<>();
-                    newTail.addAll(temp.getTail());
-                    ArrayList<Integer> newTailBuckets = new ArrayList<>();
-                    newTailBuckets.addAll(temp.getTailBuckets());
-                    Candidate newCandidate = new Candidate(newHead, newTail, newTailBuckets);
+                    
+                    Candidate newCandidate = new Candidate(newHead, new ArrayList<>());
                     freq.add(newCandidate.getHead(), newCandidate);
                     //freq.add(temp.getHead(), temp);
+                    //newCand.add(newCandidate.getHead(), newCandidate);
                 }
                 else {
                     ArrayList<Integer> newHead = new ArrayList<>();
@@ -285,8 +283,8 @@ public class DataMiner
                 Candidate largestFrequent = temp.genSubNodes(newCand, minSupCount);
                 freq.add(largestFrequent.getHead(), largestFrequent);
             }
-            System.out.println("After:");
-            System.out.println(temp.toString());
+            //System.out.println("After:");
+            //System.out.println(temp.toString());
         }
         System.out.println("Unpacking complete.");
     }

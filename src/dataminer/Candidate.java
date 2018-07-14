@@ -95,6 +95,13 @@ public class Candidate
     public void countSupport(ArrayList<Integer> transaction) 
     {
         int itemCount = 0;
+        int target = 0;
+        if (tail.size() < lookaheadCount) {
+            target = tail.size();
+        }
+        else {
+            target = lookaheadCount;
+        }
         
         // Scan transaction for the Candidate's head and each item in its tail.
         for (int i = 0; i < tail.size(); i++) 
@@ -117,7 +124,8 @@ public class Candidate
         //ArrayList<Integer> lookaheadTail = new ArrayList<>();
         // If the count of items that appear in transaction is the same as the 
         // size of union, increment union count.
-        if (itemCount == lookaheadCount || itemCount == tail.size()) 
+        //if (itemCount == lookaheadCount || itemCount == tail.size())
+        if (itemCount == target)
         {
             unionCount++;
         }

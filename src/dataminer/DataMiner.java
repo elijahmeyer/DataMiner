@@ -253,16 +253,16 @@ public class DataMiner
             {
                 // This is wrong! This says that {1,2,3,4,5} and the tail items
                 // have a support of x, but really x is the support of {1} and the tail item
+                // (I'm fairly sure this has been corrected. However, this section of the code
+                // may deserve a little extra scrutiny.)
                 temp.loadTailItems();
                 temp.pruneTail(minSupCount);
                 if (temp.getTail().isEmpty()) {
                     ArrayList<Integer> newHead = new ArrayList<>();
-                    newHead.addAll(temp.getHead());
+                    newHead.addAll(temp.union());
                     
                     Candidate newCandidate = new Candidate(newHead, new ArrayList<>());
                     freq.add(newCandidate.getHead(), newCandidate);
-                    //freq.add(temp.getHead(), temp);
-                    //newCand.add(newCandidate.getHead(), newCandidate);
                 }
                 else {
                     ArrayList<Integer> newHead = new ArrayList<>();

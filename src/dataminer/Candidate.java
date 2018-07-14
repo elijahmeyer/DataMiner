@@ -131,12 +131,18 @@ public class Candidate
         }
     }
     
+    /*
+       I'm currently in the middle of testing some changes to this method.
+       Please ignore the commented code.
+    */
     public void loadTailItems() 
     {
+        int target = 0;
         if (tail.size() < lookaheadCount) {
             head.addAll(tail);
             tail.clear();
             tailBuckets.clear();
+        //    target = tail.size() - 1;
         }
         else {
             for (int i = 0; i < lookaheadCount; i++) {
@@ -145,7 +151,15 @@ public class Candidate
                 head.add(tail.remove(0));
                 tailBuckets.remove(0);
             }
+            //target = lookaheadCount - 1;
         }
+        //for (int i = 0; i < target; i++) {
+        //    head.add(tail.remove(0));
+        //    tailBuckets.remove(0);
+        //}
+        //this.genSubNodes(cand, minSupCount);
+        //head.add(tail.remove(0));
+        //tailBuckets.remove(0);
     }
     
     /*

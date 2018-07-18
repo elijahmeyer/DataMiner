@@ -50,7 +50,7 @@ public class DataMiner
         
         int numItems = database.getNumItems();
         //double supPercent = Double.parseDouble(args[1]) / 100.0;
-        double supPercent = 0.15 / 100.0;
+        double supPercent = 0.1 / 100.0;
         
         final int SUPPORT_COUNT = (int) Math.ceil(supPercent * database.size());
         //final int SUPPORT_COUNT = 2;
@@ -117,6 +117,30 @@ public class DataMiner
                 setCount++;
             }
             out.close();
+        
+            /*
+            groups = null;
+            database = null;
+            ArrayList<ArrayList<Integer>> frequents = new ArrayList<>();
+            while (iterator.hasNext()) {
+                ArrayList<Integer> temp = new ArrayList<>();
+                frequents.add(temp);
+            }
+            Collections.sort(frequents, new ItemsetComparator());
+            for (int i = 0; i < frequents.size(); i++) {
+                ArrayList<Integer> temp = frequents.get(i);
+                Collections.sort(temp);
+                for (int j = 0; j < temp.size(); j++) {
+                    out.print(temp.get(j) + " ");
+                    System.out.print(temp.get(j) + " ");
+                }
+                out.println("");
+                System.out.println("");
+                setCount++;
+            }
+            out.close();
+            */
+            
             System.out.println(setCount + " maximal frequent itemsets.");
         } catch (Exception ex) {
             System.out.println(ex.getMessage());

@@ -35,14 +35,7 @@ public class Candidate
         // united with each item in the tail.
         tailBuckets = genTailBuckets();
     }
-    
-    public Candidate(ArrayList<Integer> h, ArrayList<Integer> t, ArrayList<Integer> tb) 
-    {
-        head = h;
-        tail = t;
-        tailBuckets = tb;
-    }
-    
+        
     /*
        Returns the union of the Candidate's head and tail lists.
        This helps find maximal frequent itemsets.
@@ -121,7 +114,6 @@ public class Candidate
             }
         }
         
-        //ArrayList<Integer> lookaheadTail = new ArrayList<>();
         // If the count of items that appear in transaction is the same as the 
         // size of union, increment union count.
         //if (itemCount == lookaheadCount || itemCount == tail.size())
@@ -137,12 +129,10 @@ public class Candidate
     */
     public void loadTailItems() 
     {
-        int target = 0;
         if (tail.size() < lookaheadCount) {
             head.addAll(tail);
             tail.clear();
             tailBuckets.clear();
-        //    target = tail.size() - 1;
         }
         else {
             for (int i = 0; i < lookaheadCount; i++) {
@@ -151,15 +141,7 @@ public class Candidate
                 head.add(tail.remove(0));
                 tailBuckets.remove(0);
             }
-            //target = lookaheadCount - 1;
         }
-        //for (int i = 0; i < target; i++) {
-        //    head.add(tail.remove(0));
-        //    tailBuckets.remove(0);
-        //}
-        //this.genSubNodes(cand, minSupCount);
-        //head.add(tail.remove(0));
-        //tailBuckets.remove(0);
     }
     
     /*

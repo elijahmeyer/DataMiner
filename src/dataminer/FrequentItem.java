@@ -53,10 +53,10 @@ public class FrequentItem implements Comparable<FrequentItem>
         if (count < f.getCount()) 
         {
             // Forward:
-            return -1;
+            //return -1;
             
             // Backward:
-            //return 1;
+            return 1;
         }
         else if (count == f.getCount()) 
         {
@@ -65,10 +65,10 @@ public class FrequentItem implements Comparable<FrequentItem>
         else
         {
             // Forward:
-            return 1;
+            //return 1;
             
             // Backward:
-            //return -1;
+            return -1;
         }
     }
 }

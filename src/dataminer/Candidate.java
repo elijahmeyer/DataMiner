@@ -24,7 +24,7 @@ public class Candidate
     private ArrayList<Integer> tail = new ArrayList<>();
     private ArrayList<Integer> tailBuckets = new ArrayList<>();
     private int unionCount = 0;
-    private final int lookaheadCount = 5;
+    private final int lookaheadCount = 2;
     
     public Candidate(ArrayList<Integer> h, ArrayList<Integer> t) 
     {

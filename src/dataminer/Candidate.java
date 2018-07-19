@@ -323,4 +323,5 @@ public class Candidate
         message += "\nUnion Count: " + unionCount;
         return message;
     }
+    
 }

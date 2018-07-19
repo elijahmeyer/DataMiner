@@ -50,7 +50,7 @@ public class DataMiner
         
         int numItems = database.getNumItems();
         //double supPercent = Double.parseDouble(args[1]) / 100.0;
-        double supPercent = 0.1 / 100.0;
+        double supPercent = 0.15 / 100.0;
         
         final int SUPPORT_COUNT = (int) Math.ceil(supPercent * database.size());
         //final int SUPPORT_COUNT = 2;
@@ -279,7 +279,7 @@ public class DataMiner
                 // have a support of x, but really x is the support of {1} and the tail item
                 // (I'm fairly sure this has been corrected. However, this section of the code
                 // may deserve a little extra scrutiny.)
-                temp.loadTailItems();
+                //temp.loadTailItems();
                 temp.pruneTail(minSupCount);
                 if (temp.getTail().isEmpty()) {
                     ArrayList<Integer> newHead = new ArrayList<>();
@@ -290,12 +290,15 @@ public class DataMiner
                 }
                 else {
                     ArrayList<Integer> newHead = new ArrayList<>();
-                    newHead.addAll(temp.getHead());
+                    newHead.addAll(temp.union());
                     ArrayList<Integer> newTail = new ArrayList<>();
                     newTail.addAll(temp.getTail());
                     
                     Candidate newCandidate = new Candidate(newHead, newTail);
                     newCand.add(newCandidate.getHead(), newCandidate);
+                    
+                    //Candidate largestFrequent = temp.genSubNodes(newCand, minSupCount);
+                    //freq.add(largestFrequent.getHead(), largestFrequent);
                 }
             }
             else {

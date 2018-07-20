@@ -50,7 +50,7 @@ public class DataMiner
         
         int numItems = database.getNumItems();
         //double supPercent = Double.parseDouble(args[1]) / 100.0;
-        double supPercent = 1 / 100.0;
+        double supPercent = 0.5 / 100.0;
         
         final int SUPPORT_COUNT = (int) Math.ceil(supPercent * database.size());
         //final int SUPPORT_COUNT = 2;

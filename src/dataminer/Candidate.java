@@ -57,6 +57,14 @@ public class Candidate
         return union;
     }
     
+    public ArrayList<Integer> backTail() {
+        ArrayList<Integer> backTail = new ArrayList<>();
+        for (int i = lookaheadCount; i < tail.size(); i++) {
+            backTail.add(tail.get(i));
+        }
+        return backTail;
+    }
+    
     /*
        Creates an ArrayList with as many entries as there are items in the
        Candidate's tail. This ArrayList will be used to track the frequency of

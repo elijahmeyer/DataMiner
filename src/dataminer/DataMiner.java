@@ -50,7 +50,7 @@ public class DataMiner
         
         int numItems = database.getNumItems();
         //double supPercent = Double.parseDouble(args[1]) / 100.0;
-        double supPercent = 0.15 / 100.0;
+        double supPercent = 0.1 / 100.0;
         
         final int SUPPORT_COUNT = (int) Math.ceil(supPercent * database.size());
         //final int SUPPORT_COUNT = 2;
@@ -279,30 +279,30 @@ public class DataMiner
                 // have a support of x, but really x is the support of {1} and the tail item
                 // (I'm fairly sure this has been corrected. However, this section of the code
                 // may deserve a little extra scrutiny.)
-                temp.loadTailItems();
+                //temp.loadTailItems();
                 temp.pruneTail(minSupCount);
                 if (temp.getTail().isEmpty()) {
                     ArrayList<Integer> newHead = new ArrayList<>();
-                    //newHead.addAll(temp.union());
-                    newHead.addAll(temp.getHead());
+                    newHead.addAll(temp.union());
+                    //newHead.addAll(temp.getHead());
                     
                     Candidate newCandidate = new Candidate(newHead, new ArrayList<>());
                     freq.add(newCandidate.getHead(), newCandidate);
                 }
                 else {
                     ArrayList<Integer> newHead = new ArrayList<>();
-                    //newHead.addAll(temp.union());
-                    newHead.addAll(temp.getHead());
+                    newHead.addAll(temp.union());
+                    //newHead.addAll(temp.getHead());
                     ArrayList<Integer> newTail = new ArrayList<>();
                     // ACCURACY TESTING: Create a method that returns the tail minus 
                     // the first lookaheadCount entries.
-                    newTail.addAll(temp.getTail());
+                    newTail.addAll(temp.backTail());
                     
                     Candidate newCandidate = new Candidate(newHead, newTail);
                     newCand.add(newCandidate.getHead(), newCandidate);
                     
-                    //Candidate largestFrequent = temp.genSubNodes(newCand, minSupCount);
-                    //freq.add(largestFrequent.getHead(), largestFrequent);
+                    Candidate largestFrequent = temp.genSubNodes(newCand, minSupCount);
+                    freq.add(largestFrequent.getHead(), largestFrequent);
                 }
             }
             else {

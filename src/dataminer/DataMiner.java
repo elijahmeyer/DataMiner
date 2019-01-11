@@ -34,7 +34,7 @@ public class DataMiner
     public static void main(String[] args) 
     {
         // Initialize variables.
-        String filename = "C:\\Users\\Elijah\\Desktop\\MaxMiner Stuff\\T10I4D100K.txt";
+        String filename = "C:\\Users\\elija\\OneDrive\\Desktop\\MaxMiner Stuff\\T10I4D100K.txt";
         //String filename = "C:\\Users\\Elijah\\Desktop\\MaxMiner Stuff\\testDataset.txt";
         //String filename = args[0];
         
@@ -50,7 +50,7 @@ public class DataMiner
         
         int numItems = database.getNumItems();
         //double supPercent = Double.parseDouble(args[1]) / 100.0;
-        double supPercent = 0.1 / 100.0;
+        double supPercent = 1 / 100.0;
         
         final int SUPPORT_COUNT = (int) Math.ceil(supPercent * database.size());
         //final int SUPPORT_COUNT = 2;
@@ -117,29 +117,6 @@ public class DataMiner
                 setCount++;
             }
             out.close();
-        
-            /*
-            groups = null;
-            database = null;
-            ArrayList<ArrayList<Integer>> frequents = new ArrayList<>();
-            while (iterator.hasNext()) {
-                ArrayList<Integer> temp = new ArrayList<>();
-                frequents.add(temp);
-            }
-            Collections.sort(frequents, new ItemsetComparator());
-            for (int i = 0; i < frequents.size(); i++) {
-                ArrayList<Integer> temp = frequents.get(i);
-                Collections.sort(temp);
-                for (int j = 0; j < temp.size(); j++) {
-                    out.print(temp.get(j) + " ");
-                    System.out.print(temp.get(j) + " ");
-                }
-                out.println("");
-                System.out.println("");
-                setCount++;
-            }
-            out.close();
-            */
             
             System.out.println(setCount + " maximal frequent itemsets.");
         } catch (Exception ex) {
@@ -198,7 +175,6 @@ public class DataMiner
             ArrayList<Integer> head = new ArrayList<>();
             head.add(itemVectors.get(i).getItem());
             Candidate cand = new Candidate(head, tail);
-            //System.out.println(cand.toString());
             
             // Use the head of each candidate group to hash that group into the
             // candidate hash tree.
@@ -211,7 +187,6 @@ public class DataMiner
         head.add(itemVectors.get(itemVectors.size() - 1).getItem());
         Candidate c = new Candidate(head, new ArrayList<>());
         frequent.add(c.getHead(), c);
-        //System.out.println(c.toString());
         
         // Return the frequent hash tree.
         return frequent;
@@ -271,20 +246,13 @@ public class DataMiner
             // If the candidate group's head united with its tail is a frequent
             // itemset, add it to the frequent hash tree.
             Candidate temp = iterator.next();
-            //System.out.println("Before:");
-            //System.out.println(temp.toString());
+            
             if (temp.getUnionCount() >= minSupCount) 
             {
-                // This is wrong! This says that {1,2,3,4,5} and the tail items
-                // have a support of x, but really x is the support of {1} and the tail item
-                // (I'm fairly sure this has been corrected. However, this section of the code
-                // may deserve a little extra scrutiny.)
-                //temp.loadTailItems();
                 temp.pruneTail(minSupCount);
                 if (temp.getTail().isEmpty()) {
                     ArrayList<Integer> newHead = new ArrayList<>();
                     newHead.addAll(temp.union());
-                    //newHead.addAll(temp.getHead());
                     
                     Candidate newCandidate = new Candidate(newHead, new ArrayList<>());
                     freq.add(newCandidate.getHead(), newCandidate);
@@ -292,10 +260,8 @@ public class DataMiner
                 else {
                     ArrayList<Integer> newHead = new ArrayList<>();
                     newHead.addAll(temp.union());
-                    //newHead.addAll(temp.getHead());
                     ArrayList<Integer> newTail = new ArrayList<>();
-                    // ACCURACY TESTING: Create a method that returns the tail minus 
-                    // the first lookaheadCount entries.
+
                     newTail.addAll(temp.backTail());
                     
                     Candidate newCandidate = new Candidate(newHead, newTail);
@@ -314,8 +280,6 @@ public class DataMiner
                 Candidate largestFrequent = temp.genSubNodes(newCand, minSupCount);
                 freq.add(largestFrequent.getHead(), largestFrequent);
             }
-            //System.out.println("After:");
-            //System.out.println(temp.toString());
         }
         System.out.println("Unpacking complete.");
     }
